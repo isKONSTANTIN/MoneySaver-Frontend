@@ -36,6 +36,7 @@
           <NuxtLink to="/allPlans" class="btn btn-ghost btn-sm rounded-btn">Планы</NuxtLink>
           <NuxtLink to="/allTags" class="btn btn-ghost btn-sm rounded-btn">Теги</NuxtLink>
           <NuxtLink to="/allRepeatTransactions" class="btn btn-ghost btn-sm rounded-btn">Повтор. транзакции</NuxtLink>
+          <NuxtLink to="/analytics" class="btn btn-ghost btn-sm rounded-btn">Аналитика</NuxtLink>
         </div>
       </div>
     </div>

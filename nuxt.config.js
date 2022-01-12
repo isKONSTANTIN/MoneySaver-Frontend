@@ -3,7 +3,7 @@ export default {
   head: {
     title: 'MoneySaver',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'ru'
     },
     meta: [
       { charset: 'utf-8' },
@@ -33,7 +33,8 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/composition-api/module'
+    '@nuxtjs/composition-api/module',
+    '@nuxtjs/pwa'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -42,6 +43,14 @@ export default {
     '@nuxtjs/proxy',
     'cookie-universal-nuxt'
   ],
+
+  pwa: {
+    manifest: {
+      name: 'MoneySaver',
+      lang: 'ru',
+      icon: false
+    }
+  },
 
   axios: {
     baseURL: process.env.BASE_URL

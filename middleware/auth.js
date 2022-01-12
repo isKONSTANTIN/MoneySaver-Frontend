@@ -1,7 +1,7 @@
 export default async function ({app, context, redirect, store}) {
   const session = app.$cookies.get("auth_session");
 
-  if (session == null){
+  if (session == null || session === ""){
     redirect("/auth")
     return
   }
@@ -21,5 +21,9 @@ export default async function ({app, context, redirect, store}) {
     }).catch(e => {
 
     })
+
+  if (user === undefined){
+    redirect("/auth")
+  }
 
 }

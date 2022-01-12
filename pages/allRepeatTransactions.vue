@@ -4,7 +4,7 @@
       <navbar class="mt-5 mb-8 w-4/5"></navbar>
 
       <div class="content">
-        <div class="panel">
+        <div class="panel min-w-max">
 
           <div class="flex justify-between mr-4">
             <h2 class="font-bold">Все повтор. транзакции:</h2>
@@ -17,7 +17,7 @@
           </div>
           <hr class="my-2">
 
-          <table class="table w-full table-compact table-zebra">
+          <table class="table min-w-max w-full table-compact table-zebra">
             <thead>
             <tr>
               <th>Сумма</th>

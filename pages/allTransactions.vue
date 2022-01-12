@@ -4,7 +4,7 @@
       <navbar class="mt-5 mb-8 w-4/5"></navbar>
 
       <div class="content">
-        <div class="panel">
+        <div class="panel min-w-max">
 
           <div class="flex justify-between mr-4">
             <h2 class="font-bold">Все транзакции:</h2>
@@ -17,7 +17,7 @@
           </div>
           <hr class="my-2">
 
-          <table class="table w-full table-compact table-zebra">
+          <table class="table min-w-max w-full table-compact table-zebra">
             <thead>
             <tr>
               <th>Сумма</th>
@@ -25,6 +25,7 @@
               <th>Дата</th>
               <th>Счет</th>
               <th>Описание</th>
+              <th></th>
             </tr>
             </thead>
             <tbody>
@@ -36,6 +37,13 @@
               <td>{{getDate(transaction.date.seconds)}}</td>
               <td>{{getAccountName(transaction.account)}}</td>
               <td>{{transaction.description}}</td>
+              <td>
+                <button @click="cancelTransaction(transaction.id)" class="btn btn-ghost p-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </td>
             </tr>
             </tbody>
           </table>
@@ -123,6 +131,15 @@ export default {
         .then(result => {
           this.transactions = result
         })
+    },
+
+    cancelTransaction(id) {
+      const session = this.$cookies.get("auth_session");
+
+      actions.apiPostRequest("transactions/cancel?token=" + session, {id: id}, this.$axios.defaults.baseURL)
+        .then(() => {
+          this.loadTransactions(this.page)
+        })
     }
   },
 
@@ -145,9 +162,6 @@ export default {
 </script>
 
 <style scoped>
-.content {
-  @apply w-max lg:w-4/5;
-}
 
 .panel {
   @apply shadow-lg rounded-2xl p-0 pt-4 pl-2 lg:p-4 bg-base-100;

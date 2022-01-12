@@ -7,10 +7,15 @@
       <div v-for="cost in costs">
         <h2 class="font-medium">{{cost.tag.name}}:</h2>
         <progress class="progress progress-info" :value="cost.left" :max="cost.tag.limit"></progress>
-        <div class="flex flex-nowrap font-light">
+        <div v-if="cost.tag.limit !== 0" class="flex flex-nowrap font-light">
           {{
-            cost.left > 0 ? 'Осталось ' + new Intl.NumberFormat().format(cost.left) + ' из ' + new Intl.NumberFormat().format(cost.tag.limit) + ' ₽'
+            cost.left >= 0 ? 'Осталось ' + new Intl.NumberFormat().format(cost.left) + ' из ' + new Intl.NumberFormat().format(cost.tag.limit) + ' ₽'
               : 'Перерасход ' + new Intl.NumberFormat().format(Math.abs(cost.left)) + ' ₽ (лимит: ' + new Intl.NumberFormat().format(cost.tag.limit) + ')'
+          }}
+        </div>
+        <div v-else class="flex flex-nowrap font-light">
+          {{
+            'Потрачено ' + new Intl.NumberFormat().format(Math.abs(cost.left)) + ' ₽'
           }}
         </div>
       </div>
