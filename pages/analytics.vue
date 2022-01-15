@@ -25,7 +25,7 @@
             </div>
 
             <hr class="my-4">
-            <client-only>
+            <client-only v-if="loaded">
               <line-chart :chart-data="yearTagsData"></line-chart>
             </client-only>
           </div>
