@@ -64,10 +64,12 @@ import moment from "moment";
 import {actions} from "../store";
 import DoughnutChart from "../components/objects/charts/doughnutChart";
 import BarChart from "../components/objects/charts/barChart";
+import Modals from "../components/modals/modals";
 
 export default {
   name: "analytics",
-  components: {BarChart, DoughnutChart, LineChart, FooterPanel, Navbar},
+  middleware: 'auth',
+  components: {BarChart, DoughnutChart, LineChart, FooterPanel, Navbar, Modals},
 
   data() {
     return {
@@ -173,6 +175,8 @@ export default {
         datasets: datasets
       };
 
+      console.log(datasets)
+
       this.barYearTagsData = {
         labels: labels,
         datasets: [
@@ -243,6 +247,7 @@ export default {
 
     async loadData() {
       const session = this.$cookies.get("auth_session");
+
       var data = {}
 
       await fetch(this.$axios.defaults.baseURL + "api/info/yearChanges?token=" + session + "&year=" + this.year)
@@ -252,10 +257,6 @@ export default {
         })
 
       var tags = {}
-      var doughnutTags = {}
-      doughnutTags.labels = []
-      doughnutTags.datas = []
-      doughnutTags.colors = []
 
       for (const [month, map] of Object.entries(data)) {
         for (const [tag, delta] of Object.entries(map)) {

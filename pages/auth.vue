@@ -64,7 +64,7 @@ export default {
         })
         .then(response => response.json())
         .then((r) => {
-          this.$cookies.set("auth_session", r.token);
+          this.$cookies.set("auth_session", r.token,"31d");
           window.location.href = '/';
         })
     }
