@@ -25,25 +25,33 @@
             </div>
 
             <hr class="my-4">
-            <line-chart :chart-data="yearTagsData"></line-chart>
+            <client-only>
+              <line-chart :chart-data="yearTagsData"></line-chart>
+            </client-only>
           </div>
 
           <div class="panel">
             <h2 class="font-bold">Расходы за год:</h2>
             <hr class="my-4">
-            <doughnut-chart :chart-data="doughnutCostsTagsData"></doughnut-chart>
+            <client-only>
+              <doughnut-chart :chart-data="doughnutCostsTagsData"></doughnut-chart>
+            </client-only>
           </div>
 
           <div class="panel">
             <h2 class="font-bold">Доходы за год:</h2>
             <hr class="my-4">
-            <doughnut-chart :chart-data="doughnutIncomesTagsData"></doughnut-chart>
+            <client-only>
+              <doughnut-chart :chart-data="doughnutIncomesTagsData"></doughnut-chart>
+            </client-only>
           </div>
 
           <div class="panel">
             <h2 class="font-bold">Доходы и расходы:</h2>
             <hr class="my-4">
-            <bar-chart :chart-data="barYearTagsData"></bar-chart>
+            <client-only>
+              <bar-chart :chart-data="barYearTagsData"></bar-chart>
+            </client-only>
           </div>
 
         </div>

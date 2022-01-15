@@ -24,7 +24,8 @@ export default {
   plugins: [
     '@/assets/css/main.pcss',
     { src: '~/plugins/chartjs.js', ssr: false },
-    { src: '~/plugins/qr.js', ssr: false }
+    { src: '~/plugins/qr.js', ssr: false },
+    { src: "~/plugins/composition.js" }
   ],
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: false,
