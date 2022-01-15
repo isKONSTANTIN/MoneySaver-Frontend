@@ -4,7 +4,7 @@
 
 <script>
 import { defineComponent } from "@vue/composition-api";
-import { RadarChart, LineChart} from 'vue-chart-3';
+import { LineChart} from 'vue-chart-3';
 
 export default defineComponent({
   name: "lineChart",

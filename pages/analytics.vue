@@ -33,7 +33,7 @@
           <div class="panel">
             <h2 class="font-bold">Расходы за год:</h2>
             <hr class="my-4">
-            <client-only>
+            <client-only v-if="loaded">
               <doughnut-chart :chart-data="doughnutCostsTagsData"></doughnut-chart>
             </client-only>
           </div>
@@ -41,7 +41,7 @@
           <div class="panel">
             <h2 class="font-bold">Доходы за год:</h2>
             <hr class="my-4">
-            <client-only>
+            <client-only v-if="loaded">
               <doughnut-chart :chart-data="doughnutIncomesTagsData"></doughnut-chart>
             </client-only>
           </div>
@@ -49,7 +49,7 @@
           <div class="panel">
             <h2 class="font-bold">Доходы и расходы:</h2>
             <hr class="my-4">
-            <client-only>
+            <client-only v-if="loaded">
               <bar-chart :chart-data="barYearTagsData"></bar-chart>
             </client-only>
           </div>
@@ -86,6 +86,8 @@ export default {
       barYearTagsData: {},
       doughnutCostsTagsData: {},
       doughnutIncomesTagsData: {},
+
+      loaded: false
     }
   },
 
@@ -275,6 +277,8 @@ export default {
 
       this.calculateYearTagsData(tags)
       this.calculateDoughnutsTagsData(tags)
+
+      this.loaded = true
     }
   },
 
