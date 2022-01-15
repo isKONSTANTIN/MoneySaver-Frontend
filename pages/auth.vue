@@ -65,7 +65,7 @@ export default {
         .then(response => response.json())
         .then((r) => {
           this.$cookies.set("auth_session", r.token,{maxAge: 60 * 60 * 24 * 7});
-          window.location.href = '/';
+          this.$router.push('/');
         })
     }
   }

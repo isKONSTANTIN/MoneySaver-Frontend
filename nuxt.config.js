@@ -38,25 +38,24 @@ export default {
     '@nuxtjs/pwa'
   ],
 
+  pwa: {
+    manifest: {
+      lang: 'ru',
+      name: "MoneySaver",
+      short_name: "MoneySaver",
+      display: 'fullscreen'
+    },
+    workbox: {
+      dev: true
+    }
+  },
+
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/proxy',
     'cookie-universal-nuxt'
   ],
-
-  pwa: {
-    manifest: {
-      lang: 'ru',
-      name: "MoneySaver",
-      short_name: "MS",
-      display: 'fullscreen',
-      theme_color: '#f1f1f1'
-    },
-    workbox: {
-      dev: true
-    }
-  },
 
   axios: {
     baseURL: process.env.BASE_URL

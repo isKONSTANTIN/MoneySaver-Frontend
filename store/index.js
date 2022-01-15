@@ -1,3 +1,5 @@
+import Vue from "vue";
+
 export const actions = {
   reloadAccounts(context, session){
     fetch(context.$axios.defaults.baseURL + "api/accounts?token=" + session)
@@ -163,53 +165,67 @@ export const mutations = {
 
   createModal(state, name){
     if (state.modals[name] === undefined)
-      state.modals[name] = {
+      Vue.set(state.modals, name, {
         showed: false,
         data: {}
-      }
+      })
   },
 
   setModalShowEvent(state, args){
     if (state.modals[args.name] === undefined)
-      state.modals[args.name] = {
+      Vue.set(state.modals, args.name, {
         showed: false,
         data: {},
         showEvent: args.func
-      }
+      })
     else{
-      state.modals[args.name].showEvent = args.func;
+      Vue.set(state.modals[args.name], 'showEvent', args.func)
     }
   },
 
   setModalHideEvent(state, args){
     if (state.modals[args.name] === undefined)
-      state.modals[args.name] = {
+      Vue.set(state.modals, args.name, {
         showed: false,
         data: {},
-        hideEvent: args.func
-      }
+        showEvent: args.func
+      })
     else{
-      state.modals[args.name].hideEvent = args.func;
+      Vue.set(state.modals[args.name], 'hideEvent', args.func)
     }
   },
 
   showModal(state, args) {
-    state.modals[args.name].showed = true;
-    state.modals[args.name].data = args.data;
+    if (state.modals[args.name] === undefined)
+      Vue.set(state.modals, args.name, {
+        showed: true,
+        data: {}
+      })
+    else {
+      Vue.set(state.modals[args.name], 'showed', true)
+      Vue.set(state.modals[args.name], 'data', args.data)
 
-    var func = state.modals[args.name].showEvent;
+      var func = state.modals[args.name].showEvent;
 
-    if (typeof func === 'function')
-      func(args.data)
+      if (typeof func === 'function')
+        func(args.data)
+    }
   },
 
   hideModal(state, name) {
-    state.modals[name].showed = false;
-    state.modals[name].data = {};
+    if (state.modals[name] === undefined)
+      Vue.set(state.modals, name, {
+        showed: false,
+        data: {}
+      })
+    else {
+      Vue.set(state.modals[name], 'showed', false)
+      Vue.set(state.modals[name], 'data', {})
 
-    var func = state.modals[name].hideEvent;
+      var func = state.modals[name].hideEvent;
 
-    if (typeof func === 'function')
-      func()
+      if (typeof func === 'function')
+        func()
+    }
   },
 }
