@@ -47,9 +47,14 @@ export default {
 
   pwa: {
     manifest: {
-      name: 'MoneySaver',
       lang: 'ru',
-      icon: false
+      name: "MoneySaver",
+      short_name: "MS",
+      display: 'fullscreen',
+      theme_color: '#f1f1f1'
+    },
+    workbox: {
+      dev: true
     }
   },
 
