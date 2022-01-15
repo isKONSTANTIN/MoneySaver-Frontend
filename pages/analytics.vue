@@ -175,8 +175,6 @@ export default {
         datasets: datasets
       };
 
-      console.log(datasets)
-
       this.barYearTagsData = {
         labels: labels,
         datasets: [
@@ -272,7 +270,7 @@ export default {
     }
   },
 
-  async beforeMount() {
+  async mounted() {
     const session = this.$cookies.get("auth_session");
 
     await actions.preloadData(this, session)

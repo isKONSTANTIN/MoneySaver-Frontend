@@ -12,6 +12,7 @@ cp ./package.json deploy/
 
 echo "#!/bin/bash" >> deploy/start.sh
 echo "" >> deploy/start.sh
+echo "cd ~" >> deploy/start.sh
 echo "npm i" >> deploy/start.sh
 echo "NUXT_HOST=0.0.0.0 BASE_URL=${BASE_URL} npm start" >> deploy/start.sh
 

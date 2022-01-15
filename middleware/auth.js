@@ -17,6 +17,7 @@ export default async function ({app, context, redirect, store}) {
     .then(response => response.json())
     .then(result => {
       store.commit("setUser", result);
+      app.$cookies.set("auth_session", session,{maxAge: 60 * 60 * 24 * 7});
       user = result;
     }).catch(e => {
 
