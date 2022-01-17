@@ -36,6 +36,12 @@ export default {
   middleware: 'auth',
   components: {FooterPanel, Plans, Actions, Transactions, MonthStatistics, Modals, Accounts, Navbar},
 
+  mounted() {
+    const session = this.$cookies.get("auth_session");
+
+    actions.notifications(this, session)
+  },
+
   beforeMount() {
     const session = this.$cookies.get("auth_session");
 

@@ -1,6 +1,57 @@
 import Vue from "vue";
 
 export const actions = {
+
+  urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+      .replace(/\-/g, '+')
+      .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  },
+
+  notifications(context, session) {
+    navigator.serviceWorker.ready
+      .then((serviceWorkerRegistration) => {
+        serviceWorkerRegistration.pushManager.getSubscription()
+          .then(async (subscription) => {
+            try {
+              let subscribe = null;
+
+              if (!subscription) {
+                var publicKey = ""
+
+                await fetch(context.$axios.defaults.baseURL + "api/pushing/publicKey?token=" + session)
+                  .then(response => response.text())
+                  .then(result => {
+                    publicKey = result
+                  })
+
+                await serviceWorkerRegistration.pushManager
+                  .subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: this.urlBase64ToUint8Array(publicKey),
+                  }).then(async (s) => {
+                    subscribe = s.toJSON();
+                  });
+
+                actions.apiPostRequest("pushing/setNotificationData?token=" + session, {endpoint: subscribe.endpoint, auth: subscribe.keys.auth, p256dh: subscribe.keys.p256dh}, context.$axios.defaults.baseURL)
+                  .then(() => {})
+              }
+            } catch (e) {
+              console.log(e)
+            }
+          });
+      });
+  },
+
   reloadAccounts(context, session){
     fetch(context.$axios.defaults.baseURL + "api/accounts?token=" + session)
       .then(response => response.json())

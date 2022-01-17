@@ -49,11 +49,13 @@
         <input type="text" v-model="token" placeholder="" class="input input-bordered">
       </div>
 
+      <error class="mt-2" :text="error"></error>
+
       <div class="modal-action">
         <label @click="$store.commit('hideModal', 'receipt-token-setter')" class="btn btn-ghost">
           Отменить
         </label>
-        <label @click="apply()" class="btn btn-success">
+        <label @click="apply()" :disabled="inProgress" class="btn btn-success">
           Установить
         </label>
       </div>
@@ -63,13 +65,17 @@
 
 <script>
 import {actions} from "../../store";
+import Error from "../objects/error";
 
 export default {
   name: "receiptTokenSetter",
-
+  components: {Error},
   data() {
     return {
-      token: ""
+      token: "",
+      inProgress: false,
+
+      error: ""
     }
   },
 
@@ -77,15 +83,25 @@ export default {
     apply(){
       const session = this.$cookies.get("auth_session");
 
-      if (this.token === "")
+      if (this.token === ""){
+        this.error = "Токен не должен быть пустым!"
         return
+      }
 
+      this.inProgress = true;
       actions.apiPostRequest("user/updateReceiptToken?token=" + session, {receipt: this.token}, this.$axios.defaults.baseURL)
         .then(() => {
           actions.reloadUser(this, session)
           this.$store.commit('hideModal', 'receipt-token-setter')
           this.token = ""
         })
+        .catch((e) => {
+          this.error = "Неизвестная ошибка!"
+          console.log(e)
+        })
+        .finally(() => {
+          this.inProgress = false
+      })
     }
   }
 }

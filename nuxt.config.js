@@ -43,11 +43,18 @@ export default {
       lang: 'ru',
       name: "MoneySaver",
       short_name: "MoneySaver",
-      display: 'fullscreen'
+      display: 'fullscreen',
+      gcm_sender_id: "103953800507"
     },
     workbox: {
-      dev: true
+      dev: false
     }
+  },
+
+  workbox: {
+    importScripts: [
+      'custom-sw.js'
+    ],
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules

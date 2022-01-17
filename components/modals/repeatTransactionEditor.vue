@@ -78,11 +78,13 @@
         <input type="text" v-model="description" class="input input-bordered w-full">
       </div>
 
+      <error class="mt-2" :text="error"></error>
+
       <div class="modal-action">
         <label @click="$store.commit('hideModal', 'repeat-transaction-editor')" class="btn btn-ghost">
           Отменить
         </label>
-        <label @click="apply()" class="btn btn-success">
+        <label @click="apply()" :disabled="inProgress" class="btn btn-success">
           Сохранить
         </label>
       </div>
@@ -92,10 +94,11 @@
 
 <script>
 import {actions} from "../../store";
+import Error from "../objects/error";
 
 export default {
   name: "repeatTransactionEditor",
-
+  components: {Error},
   computed: {
     accounts: function (){
       return this.$store.state.accounts;
@@ -124,6 +127,9 @@ export default {
       account: "",
       description: "",
       id: 0,
+
+      inProgress: false,
+      error: ""
     }
   },
 
@@ -153,8 +159,25 @@ export default {
       var repeatFunc = this.repeatFunc === "Еженедельно" ? 0 : (this.repeatFunc === "Ежемесячно" ? 1 : 2)
       var repeatArg = repeatFunc === 0 ? days.findIndex(s => s === this.repeatArg) + 1 : parseInt(this.repeatArg)
 
-      if (tag === undefined || account === undefined || delta === 0 || repeatArg < 1 || isNaN(repeatArg))
+      if (tag === undefined){
+        this.error = "Тег не найден!"
         return;
+      }
+
+      if (account === undefined){
+        this.error = "Счет не найден!"
+        return;
+      }
+
+      if (delta === 0){
+        this.error = "Сумма не должна быть нулевая!"
+        return;
+      }
+
+      if (repeatArg < 1 || isNaN(repeatArg)){
+        this.error = "Неправильный аргумент типа повтора"
+        return;
+      }
 
       var lastRepeat = new Date(this.lastRepeat).getTime() / 1000 + 60 * 60 * 9;
 
@@ -162,12 +185,20 @@ export default {
         lastRepeat = new Date().getTime() / 1000;
 
       const session = this.$cookies.get("auth_session");
+      this.inProgress = true;
 
       actions.apiPostRequest("transactions/repeat/edit?token=" + session, {id: this.id, delta: delta, tag: tag.id, account: account.id, repeatArg: repeatArg, lastRepeat: parseInt(lastRepeat), repeatFunc: repeatFunc, description: this.description}, this.$axios.defaults.baseURL)
         .then(() => {
           actions.preloadData(this, session)
           this.$store.commit('hideModal', 'repeat-transaction-editor')
         })
+        .catch((e) => {
+          this.error = "Неизвестная ошибка!"
+          console.log(e)
+        })
+        .finally(() => {
+          this.inProgress = false;
+      })
     }
   }
 }

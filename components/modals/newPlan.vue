@@ -41,11 +41,13 @@
         <input type="text" v-model="description" class="input input-bordered w-full">
       </div>
 
+      <error class="mt-2" :text="error"></error>
+
       <div class="modal-action">
         <label @click="$store.commit('hideModal', 'new-plan')" class="btn btn-ghost">
           Отменить
         </label>
-        <label @click="apply()" class="btn btn-success">
+        <label @click="apply()" :disabled="inProgress" class="btn btn-success">
           Создать
         </label>
       </div>
@@ -55,10 +57,11 @@
 
 <script>
 import {actions} from "~/store";
+import Error from "../objects/error";
 
 export default {
   name: "newPlan",
-
+  components: {Error},
   computed: {
     accounts: function (){
       return this.$store.state.accounts;
@@ -75,7 +78,9 @@ export default {
       tag: "",
       date: new Date().toISOString().substr(0, 10),
       account: "",
-      description: ""
+      description: "",
+      inProgress: false,
+      error: ""
     }
   },
 
@@ -86,8 +91,20 @@ export default {
       var tag = this.tags.find(t => t.name === this.tag)
       var account = this.accounts.find(a => a.name === this.account)
 
-      if (tag === undefined || account === undefined || delta === 0)
+      if (tag === undefined){
+        this.error = "Тег не найден!"
         return;
+      }
+
+      if (account === undefined){
+        this.error = "Счет не найден!"
+        return;
+      }
+
+      if (delta === 0){
+        this.error = "Сумма не должна быть нулевая!"
+        return;
+      }
 
       if (tag.kind !== 0)
         delta *= tag.kind;
@@ -99,11 +116,18 @@ export default {
 
       const session = this.$cookies.get("auth_session");
 
+      this.inProgress = true
       actions.apiPostRequest("plans/add?token=" + session, {delta: delta, tag: tag.id, date: parseInt(time), account: account.id, description: this.description}, this.$axios.defaults.baseURL)
         .then(() => {
           actions.preloadData(this, session)
           this.$store.commit('hideModal', 'new-plan')
         })
+        .catch(e => {
+          this.error = "Неизвестная ошибка!"
+          console.log(e)
+        }).finally(() => {
+          this.inProgress = false
+      })
     }
   }
 }

@@ -41,8 +41,10 @@
         <input type="text" v-model="description" class="input input-bordered w-full">
       </div>
 
+      <error class="mt-2" :text="error"></error>
+
       <div class="mt-6 flex justify-between w-full">
-        <button @click="fromQR()" class="btn" :class="{'btn-error': qrCodeError, 'btn-ghost': !qrCodeError}">
+        <button :disabled="inProgress" @click="fromQR()" class="btn" :class="{'btn-error': qrCodeError, 'btn-ghost': !qrCodeError}">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
           </svg>
@@ -51,7 +53,7 @@
           <label @click="$store.commit('hideModal', 'new-transaction')" class="btn btn-ghost">
             Отменить
           </label>
-          <label @click="apply()" class="btn btn-success">
+          <label @click="apply()" :disabled="inProgress" class="btn btn-success">
             Создать
           </label>
         </div>
@@ -62,10 +64,11 @@
 
 <script>
 import {actions} from "../../store";
+import Error from "../objects/error";
 
 export default {
   name: "newTransaction",
-
+  components: {Error},
   computed: {
     accounts: function (){
       return this.$store.state.accounts;
@@ -83,7 +86,10 @@ export default {
       date: new Date().toISOString().substr(0, 10),
       account: "",
       description: "",
-      qrCodeError: false
+      qrCodeError: false,
+
+      inProgress: false,
+      error: ""
     }
   },
 
@@ -94,8 +100,20 @@ export default {
       var tag = this.tags.find(t => t.name === this.tag)
       var account = this.accounts.find(a => a.name === this.account)
 
-      if (tag === undefined || account === undefined || delta === 0)
+      if (tag === undefined){
+        this.error = "Тег не найден!"
         return;
+      }
+
+      if (account === undefined){
+        this.error = "Счет не найден!"
+        return;
+      }
+
+      if (delta === 0){
+        this.error = "Сумма не должна быть нулевая!"
+        return;
+      }
 
       if (tag.kind !== 0)
         delta *= tag.kind;
@@ -106,12 +124,20 @@ export default {
         time = new Date().getTime() / 1000;
 
       const session = this.$cookies.get("auth_session");
+      this.inProgress = true;
 
       actions.apiPostRequest("transactions/add?token=" + session, {delta: delta, tag: tag.id, date: parseInt(time), account: account.id, description: this.description}, this.$axios.defaults.baseURL)
         .then(() => {
           actions.preloadData(this, session)
           this.$store.commit('hideModal', 'new-transaction')
         })
+        .catch((e) => {
+          this.error = "Неизвестная ошибка!"
+          console.log(e)
+        })
+        .finally(() => {
+          this.inProgress = false
+      })
     },
 
     fromQR(){

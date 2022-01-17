@@ -50,11 +50,13 @@
         </select>
       </div>
 
+      <error class="mt-2" :text="error"></error>
+
       <div class="modal-action">
         <label @click="$store.commit('hideModal', 'plan-editor')" class="btn btn-ghost">
           Отменить
         </label>
-        <label @click="apply()" class="btn btn-success">
+        <label :disabled="inProgress" @click="apply()" class="btn btn-success">
           Сохранить
         </label>
       </div>
@@ -64,10 +66,11 @@
 
 <script>
 import {actions} from "~/store";
+import Error from "../objects/error";
 
 export default {
   name: "planEditor",
-
+  components: {Error},
   data() {
     return {
       id: 0,
@@ -77,6 +80,9 @@ export default {
       account: "",
       description: "",
       state: "",
+
+      inProgress: false,
+      error: ""
     }
   },
 
@@ -115,9 +121,6 @@ export default {
     apply(){
       const session = this.$cookies.get("auth_session");
 
-      if (this.delta === 0 || this.tag === "" || this.account === "" || this.state === "")
-        return
-
       var tag = this.tags.find(t => t.name === this.tag)
       var account = this.accounts.find(a => a.name === this.account)
 
@@ -125,6 +128,27 @@ export default {
       if (isNaN(time))
         time = new Date().getTime() / 1000;
 
+      if (tag === undefined){
+        this.error = "Тег не найден!"
+        return;
+      }
+
+      if (account === undefined){
+        this.error = "Счет не найден!"
+        return;
+      }
+
+      if (this.delta === 0){
+        this.error = "Сумма не должна быть нулевая!"
+        return;
+      }
+
+      if (this.state === ""){
+        this.error = "Неправильное состояние!"
+        return;
+      }
+
+      this.inProgress = true;
       actions.apiPostRequest("plans/edit?token=" + session, {
         id: this.id,
         delta: parseFloat(this.delta),
@@ -138,6 +162,13 @@ export default {
           actions.reloadPlans(this, session)
           this.$store.commit('hideModal', 'plan-editor')
         })
+        .catch((e) => {
+          this.error = "Неизвестная ошибка!"
+          console.log(e)
+        })
+        .finally(() => {
+          this.inProgress = false;
+      })
     }
   }
 }
