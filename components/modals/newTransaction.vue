@@ -10,7 +10,7 @@
             <label class="label">
               <span class="label-text">Сумма</span>
             </label>
-            <input type="number" v-model="delta" class="input input-bordered w-full">
+            <input v-model="delta" @change="calculateDelta" class="input input-bordered w-full">
 
             <label class="label">
               <span class="label-text">Тег</span>
@@ -94,8 +94,22 @@ export default {
   },
 
   methods: {
+
+    calculateDelta(){
+      var newDelta = NaN
+
+      try{
+        newDelta = parseFloat(eval(this.delta.replace(/[^-()\d/*+.]/g, '')));
+      }catch {
+
+      }
+
+      if (!isNaN(newDelta))
+        this.delta = newDelta
+    },
+
     apply(){
-      var delta = this.delta;
+      var delta = this.delta
 
       var tag = this.tags.find(t => t.name === this.tag)
       var account = this.accounts.find(a => a.name === this.account)
@@ -110,8 +124,8 @@ export default {
         return;
       }
 
-      if (delta === 0){
-        this.error = "Сумма не должна быть нулевая!"
+      if (delta === 0 || isNaN(delta) || !isFinite(delta) || Math.abs(delta) > 2147483647){
+        this.error = "Сумма должна быть корректной!"
         return;
       }
 

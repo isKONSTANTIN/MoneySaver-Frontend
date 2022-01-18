@@ -37,3 +37,13 @@ self.addEventListener('notificationclick', (event) => {
     }
   }));
 });
+
+self.addEventListener('installed', (event) => {
+  if (!event.isUpdate) {
+    console.debug('The PWA is on the latest version.')
+    return
+  }
+
+  console.debug('There is an update for the PWA, reloading...')
+  window.location.reload()
+})

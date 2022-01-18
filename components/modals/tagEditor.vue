@@ -41,9 +41,11 @@
 
 <script>
 import {actions} from "../../store";
+import Error from "../objects/error";
 
 export default {
   name: "tagEditor",
+  components: {Error},
 
   data() {
     return {

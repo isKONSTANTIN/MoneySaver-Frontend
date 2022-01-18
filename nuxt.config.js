@@ -23,9 +23,9 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '@/assets/css/main.pcss',
-    { src: '~/plugins/chartjs.js', ssr: false },
-    { src: '~/plugins/qr.js', ssr: false },
-    { src: "~/plugins/composition.js" }
+    { src: '~/plugins/chartjs.js', mode: 'client' },
+    { src: '~/plugins/qr.js',  mode: 'client' },
+    { src: "~/plugins/composition.js" },
   ],
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: false,
