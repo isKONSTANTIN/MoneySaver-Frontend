@@ -22,7 +22,7 @@
     </div>
     <hr class="my-2">
     <div class="w-full text-center font-bold">
-      Всего за месяц потрачено: {{new Intl.NumberFormat().format(costsSum())}} ₽
+      Всего за месяц потрачено: {{new Intl.NumberFormat().format(costsSum())}} из {{new Intl.NumberFormat().format(limitSum())}} ₽
     </div>
   </div>
 </template>
@@ -47,7 +47,15 @@ export default {
       this.costs.map(c => c.tag.limit - c.left).forEach(c => result += c);
 
       return result;
-    }
+    },
+
+    limitSum(){
+      var result = 0;
+
+      this.costs.map(c => c.tag.limit).forEach(c => result += c);
+
+      return result;
+    },
   }
 
 }

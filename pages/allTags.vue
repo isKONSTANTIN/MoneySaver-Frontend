@@ -4,6 +4,24 @@
       <navbar class="mt-5 mb-8 w-4/5"></navbar>
 
       <div class="content">
+
+        <div class="w-full shadow stats mb-2">
+          <div class="stat place-items-center place-content-center">
+            <div class="stat-title">Общий доход</div>
+            <div class="stat-value text-success">{{new Intl.NumberFormat().format(incomeSum())}} ₽</div>
+          </div>
+
+          <div class="stat place-items-center place-content-center">
+            <div class="stat-title">Общий расход</div>
+            <div class="stat-value text-error">{{new Intl.NumberFormat().format(costsSum())}} ₽</div>
+          </div>
+
+          <div class="stat place-items-center place-content-center">
+            <div class="stat-title">Итого</div>
+            <div class="stat-value">{{new Intl.NumberFormat().format(incomeSum() - costsSum())}} ₽</div>
+          </div>
+        </div>
+
         <div class="panel min-w-max">
 
           <div class="flex justify-between mr-4">
@@ -17,7 +35,7 @@
             <tr>
               <th>Название</th>
               <th>Тип</th>
-              <th>Лимит</th>
+              <th>Рублей в месяц</th>
               <th></th>
             </tr>
             </thead>
@@ -64,6 +82,20 @@ export default {
   computed: {
     tags: function (){
       return this.$store.state.tags;
+    },
+  },
+
+  methods: {
+    incomeSum() {
+      var result = 0;
+      Object.values(this.tags).filter(t => t.kind === 1).forEach(t => result += t.limit)
+      return result
+    },
+
+    costsSum() {
+      var result = 0;
+      Object.values(this.tags).filter(t => t.kind === -1).forEach(t => result += t.limit)
+      return result
     },
   },
 

@@ -20,7 +20,7 @@
         </select>
 
         <label class="label">
-          <span class="label-text">Лимит</span>
+          <span class="label-text">Рублей в месяц</span>
         </label>
         <input type="number" v-model="limit" placeholder="" class="input input-bordered">
 
