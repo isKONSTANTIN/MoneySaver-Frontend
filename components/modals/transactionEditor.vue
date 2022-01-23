@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
     <div class="modal-box">
-      <h2 class="font-bold mb-1">Добавить транзакцию</h2>
+      <h2 class="font-bold mb-1">Изменить транзакцию</h2>
       <hr class="mb-4">
 
       <div class="form-control">
@@ -44,17 +44,17 @@
       <error class="mt-2" :text="error"></error>
 
       <div class="mt-6 flex justify-between w-full">
-        <button :disabled="inProgress" @click="fromQR()" class="btn" :class="{'btn-error': qrCodeError, 'btn-ghost': !qrCodeError}">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+        <button :disabled="inProgress" @click="deleteTransaction()" class="btn btn-error">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
           </svg>
         </button>
         <div>
-          <label @click="$store.commit('hideModal', 'new-transaction')" class="btn btn-ghost">
+          <label @click="$store.commit('hideModal', 'transaction-editor')" class="btn btn-ghost">
             Отменить
           </label>
           <label @click="apply()" :disabled="inProgress" class="btn btn-success">
-            Создать
+            Сохранить
           </label>
         </div>
       </div>
@@ -67,8 +67,9 @@ import {actions} from "../../store";
 import Error from "../objects/error";
 
 export default {
-  name: "newTransaction",
+  name: "transactionEditor",
   components: {Error},
+
   computed: {
     accounts: function (){
       return this.$store.state.accounts;
@@ -77,23 +78,60 @@ export default {
     tags: function (){
       return this.$store.state.tags;
     },
+
+    accountsMap: function (){
+      return this.$store.state.accountsMap;
+    },
+
+    tagsMap: function (){
+      return this.$store.state.tagsMap;
+    },
   },
 
   data() {
     return {
+      id: 0,
       delta: 0,
       tag: "",
       date: new Date().toISOString().substr(0, 10),
       account: "",
       description: "",
-      qrCodeError: false,
 
       inProgress: false,
       error: ""
     }
   },
 
+  created() {
+    this.$store.commit("setModalShowEvent", {name: 'transaction-editor', func: (data) => {
+        this.id = data.id;
+        this.delta = this.tagsMap[data.tag].kind !== 0 ? Math.abs(data.delta) : data.delta;
+        this.tag = this.tagsMap[data.tag].name;
+        this.date = new Date(data.date.seconds * 1000).toISOString().substr(0, 10);
+        this.account = this.accountsMap[data.account].name;
+        this.description = data.description
+      }
+    })
+  },
+
   methods: {
+    deleteTransaction() {
+      const session = this.$cookies.get("auth_session");
+      this.inProgress = true;
+
+      actions.apiPostRequest("transactions/cancel?token=" + session, {id: this.id}, this.$axios.defaults.baseURL)
+        .then(() => {
+          this.$store.commit('hideModal', 'transaction-editor')
+        })
+        .catch((e) => {
+          this.error = "Неизвестная ошибка!"
+          console.log(e)
+        })
+        .finally(() => {
+          this.inProgress = false
+        })
+    },
+
     calculateDelta(){
       var newDelta = NaN
 
@@ -139,10 +177,10 @@ export default {
       const session = this.$cookies.get("auth_session");
       this.inProgress = true;
 
-      actions.apiPostRequest("transactions/add?token=" + session, {delta: delta, tag: tag.id, date: parseInt(time), account: account.id, description: this.description}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("transactions/edit?token=" + session, {id: this.id, delta: delta, tag: tag.id, date: parseInt(time), account: account.id, description: this.description}, this.$axios.defaults.baseURL)
         .then(() => {
           actions.preloadData(this, session)
-          this.$store.commit('hideModal', 'new-transaction')
+          this.$store.commit('hideModal', 'transaction-editor')
         })
         .catch((e) => {
           this.error = "Неизвестная ошибка!"
@@ -150,44 +188,10 @@ export default {
         })
         .finally(() => {
           this.inProgress = false
-      })
-    },
-
-    fromQR(){
-      if (this.$store.state.user.receiptToken === ""){
-        this.$store.commit('showModal', {name: 'receipt-token-setter'})
-        return
-      }
-
-      this.$store.commit('showModal',
-        {
-          name: 'qr-scanner',
-          data: {
-            resultFunc: (d) => {
-              const session = this.$cookies.get("auth_session");
-
-              fetch(this.$axios.defaults.baseURL + "api/receipt/check?token=" + session + "&args=" + btoa(d))
-                .then(response => response.json())
-                .then(result => {
-                    if (result.code === 1){
-                      var data = result.data.json
-                      this.delta = data.totalSum / 100.0
-                      this.date = new Date(data.dateTime).toISOString().substr(0, 10)
-                      this.account = this.accounts[0].name
-                      this.description = data.user
-                      this.qrCodeError = false
-                    }else {
-                      this.qrCodeError = true;
-                    }
-
-                  }
-                ).catch(e => {})
-            }
-          }
         })
-
-    }
+    },
   }
+
 }
 </script>
 
