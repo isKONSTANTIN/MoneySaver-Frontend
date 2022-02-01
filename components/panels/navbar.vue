@@ -18,7 +18,7 @@
 
     <div class="flex-none mr-2">
       <div class="hidden lg:flex cursor-default font-bold">
-        {{userMail}}
+        <NuxtLink to="/user" class="btn btn-ghost btn-sm rounded-btn">{{userMail}}</NuxtLink>
       </div>
       <div class="dropdown dropdown-end lg:hidden">
         <div tabindex="0" class="m-1 btn btn-sm">
@@ -28,7 +28,7 @@
         </div>
         <div tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 text-base-content rounded-box">
           <div class="cursor-default font-bold text-center">
-            {{userMail}}
+            <NuxtLink to="/user" class="btn btn-ghost btn-sm rounded-btn">{{userMail}}</NuxtLink>
             <hr class="mb-1">
           </div>
           <NuxtLink to="/" class="btn btn-ghost btn-sm rounded-btn">Дом</NuxtLink>

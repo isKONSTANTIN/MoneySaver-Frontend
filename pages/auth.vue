@@ -45,6 +45,7 @@ import FooterPanel from "../components/panels/footerPanel";
 import {actions} from "../store";
 export default {
   name: "auth",
+  middleware: 'nonauthed',
   components: {FooterPanel},
 
   data() {

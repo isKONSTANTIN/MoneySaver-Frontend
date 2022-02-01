@@ -138,11 +138,22 @@ export const actions = {
     };
 
     return fetch(baseURL + "api/" + path, requestOptions)
-      .then(response => {
-        if (!response.ok)
-          throw Error(response.statusText);
+      .then(async response => {
+        if (!response.ok) {
+          var text = ""
+          var error = Error(response.statusText)
 
-        return response
+          await response.text()
+            .then(t => {
+              text = t
+            })
+            .catch((e) => {console.log(e)})
+            .finally(() => {
+              error = Error(response.statusText + ": " + text)
+            })
+          throw error
+        } else
+          return response
       })
   },
 
