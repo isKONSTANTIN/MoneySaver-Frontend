@@ -11,6 +11,7 @@
           </div>
           <actions class="row-start-1 lg:row-start-auto row-span-1 lg:col-span-2"></actions>
           <plans class="row-span-3 lg:row-span-1 lg:col-span-2"></plans>
+          <general-statistics class="lg:col-span-2"></general-statistics>
           <month-statistics class="lg:col-span-2"></month-statistics>
         </div>
 
@@ -33,10 +34,11 @@ import Transactions from "../components/panels/transactions";
 import Actions from "../components/panels/actions";
 import Plans from "~/components/panels/plans";
 import FooterPanel from "../components/panels/footerPanel";
+import GeneralStatistics from "../components/panels/generalStatistics";
 export default {
   name: 'IndexPage',
   middleware: 'auth',
-  components: {FooterPanel, Plans, Actions, Transactions, MonthStatistics, Modals, Accounts, Navbar},
+  components: {GeneralStatistics, FooterPanel, Plans, Actions, Transactions, MonthStatistics, Modals, Accounts, Navbar},
 
   mounted() {
     const session = this.$cookies.get("auth_session");

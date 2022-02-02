@@ -1,5 +1,5 @@
 <template>
-  <BarChart :chartData="chartData"></BarChart>
+  <BarChart :chartData="chartData" :options="options"></BarChart>
 </template>
 
 <script>
@@ -12,7 +12,8 @@ export default defineComponent({
   components: {BarChart},
 
   props: {
-    chartData: Object
+    chartData: Object,
+    options: {}
   },
 });
 </script>

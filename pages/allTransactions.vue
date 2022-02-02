@@ -17,7 +17,7 @@
           </div>
           <hr class="my-2">
           <div class="overflow-x-auto">
-            <table class="table min-w-max w-full table-compact table-zebra">
+            <table class="table w-full table-compact table-zebra">
               <thead>
               <tr>
                 <th>Сумма</th>

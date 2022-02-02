@@ -1,5 +1,5 @@
 <template>
-  <DoughnutChart :chartData="chartData"></DoughnutChart>
+  <DoughnutChart :chartData="chartData" :options="options"></DoughnutChart>
 </template>
 
 <script>
@@ -12,7 +12,8 @@ export default defineComponent({
   components: {DoughnutChart},
 
   props: {
-    chartData: Object
+    chartData: Object,
+    options: {}
   },
 });
 </script>

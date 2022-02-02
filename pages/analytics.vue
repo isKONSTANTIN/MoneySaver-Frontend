@@ -10,7 +10,7 @@
             <div class="flex justify-between">
               <h2 class="font-bold">Статистика по тегам:</h2>
 
-              <div>
+              <div class="flex flex-wrap gap-2 justify-end">
                 <select @change="loadData()" v-model="year" class="select select-bordered select-sm max-w-xs">
                   <option selected="selected">{{getYear(0)}}</option>
                   <option>{{getYear(-1)}}</option>
@@ -19,39 +19,53 @@
                   <option>{{getYear(-4)}}</option>
                   <option>{{getYear(-5)}}</option>
                 </select>
-                <button @click="downloadReport()" class="ml-1 btn btn-accent btn-sm">Скачать .CSV</button>
+                <button @click="downloadReport()" class="btn btn-accent btn-sm">Скачать .CSV</button>
               </div>
 
             </div>
 
             <hr class="my-4">
             <client-only v-if="loaded">
-              <line-chart :chart-data="yearTagsData"></line-chart>
+              <bar-chart :chart-data="comboYearTagsData"></bar-chart>
             </client-only>
           </div>
 
-          <div class="panel">
-            <h2 class="font-bold">Расходы за год:</h2>
-            <hr class="my-4">
-            <client-only v-if="loaded">
-              <doughnut-chart :chart-data="doughnutCostsTagsData"></doughnut-chart>
-            </client-only>
+          <div class="lg:col-span-3 flex gap-6 flex-col lg:flex-row">
+            <div class="panel w-full">
+              <h2 class="font-bold">Расходы за год:</h2>
+              <hr class="my-4">
+              <client-only v-if="loaded">
+                <doughnut-chart :chart-data="doughnutYearCostsTagsData"></doughnut-chart>
+              </client-only>
+            </div>
+
+            <div class="panel w-full">
+              <h2 class="font-bold">Доходы за год:</h2>
+              <hr class="my-4">
+              <client-only v-if="loaded">
+                <doughnut-chart :chart-data="doughnutYearIncomesTagsData"></doughnut-chart>
+              </client-only>
+            </div>
           </div>
 
-          <div class="panel">
-            <h2 class="font-bold">Доходы за год:</h2>
-            <hr class="my-4">
-            <client-only v-if="loaded">
-              <doughnut-chart :chart-data="doughnutIncomesTagsData"></doughnut-chart>
-            </client-only>
-          </div>
+          <hr class="my-4 lg:col-span-3">
 
-          <div class="panel">
-            <h2 class="font-bold">Доходы и расходы:</h2>
-            <hr class="my-4">
-            <client-only v-if="loaded">
-              <bar-chart :chart-data="barYearTagsData"></bar-chart>
-            </client-only>
+          <div class="lg:col-span-3 flex gap-6 flex-col lg:flex-row">
+            <div class="panel w-full">
+              <h2 class="font-bold">Расходы за последний месяц:</h2>
+              <hr class="my-4">
+              <client-only v-if="loaded">
+                <doughnut-chart :chart-data="doughnutMonthCostsTagsData"></doughnut-chart>
+              </client-only>
+            </div>
+
+            <div class="panel w-full">
+              <h2 class="font-bold">Доходы за последний месяц:</h2>
+              <hr class="my-4">
+              <client-only v-if="loaded">
+                <doughnut-chart :chart-data="doughnutMonthIncomesTagsData"></doughnut-chart>
+              </client-only>
+            </div>
           </div>
 
         </div>
@@ -82,10 +96,12 @@ export default {
   data() {
     return {
       year: new Date().getFullYear(),
-      yearTagsData: {},
-      barYearTagsData: {},
-      doughnutCostsTagsData: {},
-      doughnutIncomesTagsData: {},
+      comboYearTagsData: {},
+      doughnutYearCostsTagsData: {},
+      doughnutYearIncomesTagsData: {},
+
+      doughnutMonthCostsTagsData: {},
+      doughnutMonthIncomesTagsData: {},
 
       loaded: false
     }
@@ -156,101 +172,130 @@ export default {
           label: this.tagsMap[tag].name,
           data: monthWithZeros,
           cubicInterpolationMode: 'monotone',
-          borderColor: this.stringToColour(this.tagsMap[tag].name)
+          borderColor: this.stringToColour(this.tagsMap[tag].name),
+          type: 'line'
         })
       }
-
-      datasets.push({
-        label: "Итоговый расход",
-        data: costsSum,
-        cubicInterpolationMode: 'monotone',
-        borderDash: [5, 5],
-        borderColor: "#ffabab"
-      })
-
-      datasets.push({
-        label: "Итоговый доход",
-        data: incomesSum,
-        cubicInterpolationMode: 'monotone',
-        borderDash: [5, 5],
-        borderColor: "#caffab"
-      })
 
       const moment = require('moment');
       moment.locale('ru');
 
       const labels = moment.months();
-      this.yearTagsData = {
+
+      datasets.push(
+        {
+          label: "Итоговый доход",
+          data: incomesSum,
+          cubicInterpolationMode: 'monotone',
+          backgroundColor: "#caffab"
+        }
+      )
+
+      datasets.push(
+        {
+          label: "Итоговый расход",
+          data: costsSum,
+          cubicInterpolationMode: 'monotone',
+          backgroundColor: "#ffabab"
+        }
+      )
+
+      this.comboYearTagsData = {
         labels: labels,
         datasets: datasets
-      };
-
-      this.barYearTagsData = {
-        labels: labels,
-        datasets: [
-          {
-            label: "Итоговый доход",
-            data: incomesSum,
-            cubicInterpolationMode: 'monotone',
-            backgroundColor: "#caffab"
-          },
-          {
-            label: "Итоговый расход",
-            data: costsSum,
-            cubicInterpolationMode: 'monotone',
-            backgroundColor: "#ffabab"
-          }
-        ]
       }
     },
 
     calculateDoughnutsTagsData(data){
-      var costs = {}
-      costs.labels = []
-      costs.datas = []
-      costs.colors = []
+      var yearCosts = {}
+      yearCosts.labels = []
+      yearCosts.datas = []
+      yearCosts.colors = []
 
-      var incomes = {}
-      incomes.labels = []
-      incomes.datas = []
-      incomes.colors = []
+      var yearIncomes = {}
+      yearIncomes.labels = []
+      yearIncomes.datas = []
+      yearIncomes.colors = []
+
+      var monthCosts = {}
+      monthCosts.labels = []
+      monthCosts.datas = []
+      monthCosts.colors = []
+
+      var monthIncomes = {}
+      monthIncomes.labels = []
+      monthIncomes.datas = []
+      monthIncomes.colors = []
 
       for (const [tag, months] of Object.entries(data)) {
         var tagDelta = 0;
+        var lastMonth = parseInt(this.year) === new Date().getFullYear() ? new Date().getMonth() + 1 : 12
 
-        for (var i = 1; i <= (parseInt(this.year) === new Date().getFullYear() ? new Date().getMonth() + 1 : 12); i++)
+        for (var i = 1; i <= lastMonth; i++)
           tagDelta += months[i] === undefined ? 0 : months[i]
 
-        var to = tagDelta < 0 ? costs : (tagDelta > 0 ? incomes : undefined)
+        var to = tagDelta < 0 ? yearCosts : (tagDelta > 0 ? yearIncomes : undefined)
 
         if (to !== undefined){
           to.labels.push(this.tagsMap[tag].name)
           to.datas.push(Math.abs(tagDelta))
           to.colors.push(this.stringToColour(this.tagsMap[tag].name))
         }
+
+        to = months[lastMonth] < 0 ? monthCosts : (months[lastMonth] > 0 ? monthIncomes : undefined)
+
+        if (to !== undefined){
+          to.labels.push(this.tagsMap[tag].name)
+          to.datas.push(Math.abs(months[lastMonth]))
+          to.colors.push(this.stringToColour(this.tagsMap[tag].name))
+        }
       }
 
-      this.doughnutCostsTagsData = {
-        labels: costs.labels,
+      this.doughnutYearCostsTagsData = {
+        labels: yearCosts.labels,
         datasets: [
           {
             label: 'Dataset 1',
-            data: costs.datas,
-            backgroundColor: costs.colors,
+            data: yearCosts.datas,
+            backgroundColor: yearCosts.colors,
           }
         ],
       }
 
-      this.doughnutIncomesTagsData = {
-        labels: incomes.labels,
+      this.doughnutYearIncomesTagsData = {
+        labels: yearIncomes.labels,
         datasets: [
           {
             label: 'Dataset 1',
-            data: incomes.datas,
-            backgroundColor: incomes.colors,
+            data: yearIncomes.datas,
+            backgroundColor: yearIncomes.colors,
           }
         ],
       }
+      console.log(monthIncomes)
+      console.log(monthCosts)
+      this.doughnutMonthCostsTagsData = {
+        labels: monthCosts.labels,
+        datasets: [
+          {
+            label: 'Dataset 1',
+            data: monthCosts.datas,
+            backgroundColor: monthCosts.colors,
+          }
+        ],
+      }
+
+      this.doughnutMonthIncomesTagsData = {
+        labels: monthIncomes.labels,
+        datasets: [
+          {
+            label: 'Dataset 1',
+            data: monthIncomes.datas,
+            backgroundColor: monthIncomes.colors,
+          }
+        ],
+      }
+
     },
 
     async loadData() {

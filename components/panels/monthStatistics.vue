@@ -38,24 +38,6 @@ export default {
     },
   },
 
-  methods: {
-    costsSum(){
-      var result = 0;
-
-      this.costs.map(c => c.tag.limit - c.left).forEach(c => result += c);
-
-      return result;
-    },
-
-    limitSum(){
-      var result = 0;
-
-      this.costs.map(c => c.tag.limit).forEach(c => result += c);
-
-      return result;
-    },
-  }
-
 }
 </script>
 
