@@ -3,7 +3,8 @@
     <h2 class="font-bold">Расходы за месяц по тегам:</h2>
     <hr class="my-4">
 
-    <div class="gridPanel">
+
+    <div class="gridPanel flex-1">
       <div v-for="cost in costs">
         <h2 class="font-medium">{{cost.tag.name}}:</h2>
         <progress class="progress progress-info" :value="cost.left" :max="cost.tag.limit"></progress>
@@ -20,10 +21,7 @@
         </div>
       </div>
     </div>
-    <hr class="my-2">
-    <div class="w-full text-center font-bold">
-      Всего за месяц потрачено: {{new Intl.NumberFormat().format(costsSum())}} из {{new Intl.NumberFormat().format(limitSum())}} ₽
-    </div>
+
   </div>
 </template>
 
@@ -62,7 +60,7 @@ export default {
 </script>
 
 <style scoped>
-  .gridPanel {
-    @apply grid grid-cols-1 gap-4 lg:grid-cols-3;
-  }
+.gridPanel {
+  @apply grid grid-cols-1 gap-4 lg:grid-cols-3;
+}
 </style>

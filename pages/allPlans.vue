@@ -4,7 +4,7 @@
       <navbar class="mt-5 mb-8 w-4/5"></navbar>
 
       <div class="content">
-        <div class="panel min-w-max">
+        <div class="panel">
 
           <div class="flex justify-between mr-4">
             <h2 class="font-bold">Все планы:</h2>
@@ -17,39 +17,40 @@
           </div>
           <hr class="my-2">
 
-          <table class="table min-w-max w-full table-compact table-zebra">
-            <thead>
-            <tr>
-              <th>Сумма</th>
-              <th>Тег</th>
-              <th>Дата</th>
-              <th>Счет</th>
-              <th>Состояние</th>
-              <th>Описание</th>
-              <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="plan in allPlans">
-              <td>{{new Intl.NumberFormat().format(plan.delta)}}</td>
-              <td>
-                {{getTagName(plan.tag)}}
-              </td>
-              <td>{{getDate(plan.date.seconds)}}</td>
-              <td>{{getAccountName(plan.account)}}</td>
-              <td><p :class="{'text-red-600' : plan.state === -1, 'text-green-600' : plan.state === 1}">{{plan.state === -1 ? "Не выполнен" : (plan.state === 1 ? "Выполнен" : "Ожидает")}}</p></td>
-              <td>{{plan.description}}</td>
-              <td>
-                <button @click="$store.commit('showModal', {'name': 'plan-editor', data: plan})" class="btn btn-ghost p-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-
+          <div class="overflow-x-auto">
+            <table class="table table-compact table-zebra">
+              <thead>
+              <tr>
+                <th>Сумма</th>
+                <th>Тег</th>
+                <th>Дата</th>
+                <th>Счет</th>
+                <th>Состояние</th>
+                <th>Описание</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="plan in allPlans">
+                <th>{{new Intl.NumberFormat().format(plan.delta)}}</th>
+                <td>
+                  {{getTagName(plan.tag)}}
+                </td>
+                <td>{{getDate(plan.date.seconds)}}</td>
+                <td>{{getAccountName(plan.account)}}</td>
+                <td><p :class="{'text-red-600' : plan.state === -1, 'text-green-600' : plan.state === 1}">{{plan.state === -1 ? "Не выполнен" : (plan.state === 1 ? "Выполнен" : "Ожидает")}}</p></td>
+                <td>{{plan.description}}</td>
+                <td>
+                  <button @click="$store.commit('showModal', {'name': 'plan-editor', data: plan})" class="btn btn-ghost p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <modals></modals>

@@ -56,6 +56,11 @@
     </div>
 
     <div>
+      <input type="checkbox" id="account-transfer-modal" class="modal-toggle" :checked="modals['account-transfer'].showed">
+      <account-transfer></account-transfer>
+    </div>
+
+    <div>
       <input type="checkbox" id="qr-scanner-modal" class="modal-toggle" :checked="modals['qr-scanner'].showed">
       <q-r-scanner></q-r-scanner>
     </div>
@@ -75,9 +80,11 @@ import RepeatTransactionEditor from "./repeatTransactionEditor";
 import ReceiptTokenSetter from "./receiptTokenSetter";
 import QRScanner from "./QRScanner";
 import TransactionEditor from "./transactionEditor";
+import AccountTransfer from "./accountTransfer";
 export default {
   name: "modals",
   components: {
+    AccountTransfer,
     TransactionEditor,
     QRScanner,
     ReceiptTokenSetter,
@@ -97,6 +104,7 @@ export default {
     this.$store.commit("createModal", "repeat-transaction-editor")
     this.$store.commit("createModal", "receipt-token-setter")
     this.$store.commit("createModal", "transaction-editor")
+    this.$store.commit("createModal", "account-transfer")
     this.$store.commit("createModal", "qr-scanner")
   },
 

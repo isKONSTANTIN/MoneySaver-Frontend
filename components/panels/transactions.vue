@@ -3,27 +3,28 @@
   <h2 class="font-bold">Последние транзакции:</h2>
   <hr class="my-4">
 
-  <table class="table w-full table-compact table-zebra">
-    <thead>
-    <tr>
-      <th>Сумма</th>
-      <th>Тег</th>
-      <th>Дата</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr v-for="transaction in transactions">
-      <td>{{new Intl.NumberFormat().format(transaction.delta)}}</td>
-      <td>
-        <div :data-tip="transaction.description" class="tooltip z-10">
-          {{getTagName(transaction.tag)}}
-        </div>
-      </td>
-      <td>{{getDate(transaction.date.seconds)}}</td>
-    </tr>
-    </tbody>
-
-  </table>
+  <div class="overflow-x-auto">
+    <table class="table w-full table-compact table-zebra">
+      <thead>
+      <tr>
+        <th>Сумма</th>
+        <th>Тег</th>
+        <th>Дата</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="transaction in transactions">
+        <th>{{new Intl.NumberFormat().format(transaction.delta)}}</th>
+        <td>
+          <div :data-tip="transaction.description" class="tooltip z-10">
+            {{getTagName(transaction.tag)}}
+          </div>
+        </td>
+        <td>{{getDate(transaction.date.seconds)}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 </template>
 

@@ -4,12 +4,14 @@
       <navbar class="mt-5 mb-8 w-4/5"></navbar>
 
       <div class="content">
-        <div class="hiddenPanel">
-          <accounts class="row-span-4"></accounts>
-          <month-statistics class="row-span-3 lg:row-span-2 lg:col-span-2"></month-statistics>
+        <div class="hiddenPanel auto-rows-max">
+          <div class="row-span-5 flex flex-col gap-6">
+            <accounts></accounts>
+            <transactions></transactions>
+          </div>
+          <actions class="row-start-1 lg:row-start-auto row-span-1 lg:col-span-2"></actions>
           <plans class="row-span-3 lg:row-span-1 lg:col-span-2"></plans>
-          <actions class="row-start-1 lg:row-start-auto row-span-1"></actions>
-          <transactions class="row-span-2"></transactions>
+          <month-statistics class="lg:col-span-2"></month-statistics>
         </div>
 
       </div>
