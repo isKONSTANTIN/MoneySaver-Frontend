@@ -49,13 +49,16 @@ export default {
 
     const tyear = date.getFullYear()
     const tmonth = date.getMonth() + 1
-    const tday = date.getDay() - 1
+    const tday = date.getDate()
 
     date.setDate(date.getDate() - 1);
 
     const yyear = date.getFullYear()
     const ymonth = date.getMonth() + 1
-    const yday = date.getDay() - 1
+    const yday = date.getDate()
+
+    console.log(tyear, tmonth, tday)
+    console.log(yyear, ymonth, yday)
 
     const changesToday = await this.getCostsAtDay(tyear, tmonth, tday)
     const changesYesterday = await this.getCostsAtDay(yyear, ymonth, yday)
