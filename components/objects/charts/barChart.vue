@@ -1,5 +1,7 @@
 <template>
-  <BarChart :chartData="chartData" :options="options"></BarChart>
+  <div data-theme="light" class="p-2 rounded-2xl bg-base-100">
+    <BarChart :chartData="chartData" :options="options"></BarChart>
+  </div>
 </template>
 
 <script>

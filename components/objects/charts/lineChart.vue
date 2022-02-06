@@ -1,5 +1,7 @@
 <template>
-  <LineChart :chartData="chartData" :options="options"></LineChart>
+  <div data-theme="light" class="p-2 rounded-2xl bg-base-100">
+    <LineChart :chartData="chartData" :options="options"></LineChart>
+  </div>
 </template>
 
 <script>

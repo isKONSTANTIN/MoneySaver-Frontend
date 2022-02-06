@@ -1,5 +1,7 @@
 <template>
-  <DoughnutChart :chartData="chartData" :options="options"></DoughnutChart>
+  <div data-theme="light" class="p-2 rounded-2xl bg-base-100">
+    <DoughnutChart :chartData="chartData" :options="options"></DoughnutChart>
+  </div>
 </template>
 
 <script>
