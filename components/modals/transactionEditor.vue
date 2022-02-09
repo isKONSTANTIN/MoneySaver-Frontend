@@ -136,7 +136,7 @@ export default {
       var newDelta = NaN
 
       try{
-        newDelta = parseFloat(eval(this.delta.replace(/[^-()\d/*+.]/g, '')));
+        newDelta = parseFloat(eval(this.delta.replace(",", '.').replace(/[^-()\d/*+.]/g, '')));
       }catch {
 
       }

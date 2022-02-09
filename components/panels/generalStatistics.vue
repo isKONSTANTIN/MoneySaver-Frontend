@@ -83,13 +83,13 @@ export default {
       if (value < 0) costsMonthSum += value
       else incomeMonthSum += value
 
-    this.costsYesterdaySum = costsYesterdaySum
-    this.costsTodaySum = costsTodaySum
-    this.costsMonthSum = costsMonthSum
+    this.costsYesterdaySum = Number(costsYesterdaySum.toFixed(2));
+    this.costsTodaySum = Number(costsTodaySum.toFixed(2));
+    this.costsMonthSum = Number(costsMonthSum.toFixed(2));
 
-    this.incomeTodaySum = incomeTodaySum
-    this.incomeYesterdaySum = incomeYesterdaySum
-    this.incomeMonthSum = incomeMonthSum
+    this.incomeTodaySum = Number(incomeTodaySum.toFixed(2));
+    this.incomeYesterdaySum = Number(incomeYesterdaySum.toFixed(2));
+    this.incomeMonthSum = Number(incomeMonthSum.toFixed(2));
   },
 
   methods: {
