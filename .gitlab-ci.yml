@@ -5,7 +5,7 @@ build:
     - ./build.sh
   artifacts:
     paths:
-      - building/.nuxt
+      - building/nuxt
       - building/static
       - building/package.json
       - building/start.sh
