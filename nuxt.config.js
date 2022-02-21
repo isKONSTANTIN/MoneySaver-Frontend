@@ -65,7 +65,7 @@ export default {
   ],
 
   axios: {
-    baseURL: process.env.BASE_URL
+    baseURL: "/"
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
