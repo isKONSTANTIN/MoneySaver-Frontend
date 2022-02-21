@@ -93,6 +93,70 @@ export const actions = {
       })
   },
 
+  async reloadGenericStatistics(context, session) {
+    var date = new Date()
+
+    const tyear = date.getFullYear()
+    const tmonth = date.getMonth() + 1
+    const tday = date.getDate()
+
+    date.setDate(date.getDate() - 1);
+
+    const yyear = date.getFullYear()
+    const ymonth = date.getMonth() + 1
+    const yday = date.getDate()
+
+    const changesToday = await this.getCostsAtDay(context, session, tyear, tmonth, tday)
+    const changesYesterday = await this.getCostsAtDay(context, session, yyear, ymonth, yday)
+
+    var costsTodaySum = 0
+    var costsYesterdaySum = 0
+    var costsMonthSum = 0
+
+    var incomeTodaySum = 0
+    var incomeYesterdaySum = 0
+    var incomeMonthSum = 0
+
+    for (const [key, value] of Object.entries(changesToday))
+      if (value < 0) costsTodaySum += value
+      else incomeTodaySum += value
+
+    for (const [key, value] of Object.entries(changesYesterday))
+      if (value < 0) costsYesterdaySum += value
+      else incomeYesterdaySum += value
+
+    for (const [key, value] of Object.entries(context.$store.monthChanges))
+      if (value < 0) costsMonthSum += value
+      else incomeMonthSum += value
+
+    var result = {}
+
+    result.costsYesterdaySum = Number(costsYesterdaySum.toFixed(2));
+    result.costsTodaySum = Number(costsTodaySum.toFixed(2));
+    result.costsMonthSum = Number(costsMonthSum.toFixed(2));
+
+    result.incomeTodaySum = Number(incomeTodaySum.toFixed(2));
+    result.incomeYesterdaySum = Number(incomeYesterdaySum.toFixed(2));
+    result.incomeMonthSum = Number(incomeMonthSum.toFixed(2));
+
+    context.$store.commit("setGenericStatistics", result);
+  },
+
+  async getCostsAtDay(context, session,year, month, day) {
+    var result
+
+    await fetch(context.$axios.defaults.baseURL + "api/info/dayChanges?token=" + session + "&year=" + year + "&month=" + month + "&day=" + day)
+      .then(response => response.json())
+      .then(r => {
+        result = r
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+
+    return result
+  },
+
   async preloadData(context, session) {
     this.reloadAccounts(context, session)
     this.reloadTransactions(context, session)
@@ -183,12 +247,17 @@ export const state = () => ({
   shortTransactions: {},
 
   monthChanges: {},
+  genericStatistics: {},
   costsPrepared: [],
 
   plans: {}
 })
 
 export const mutations = {
+  setGenericStatistics(state, statistics){
+    state.genericStatistics = statistics;
+  },
+
   setUser(state, user){
     state.user = user;
   },
