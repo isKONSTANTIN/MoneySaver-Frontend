@@ -17,7 +17,7 @@
 
     <error class="mt-2" :text="error"></error>
 
-    <label @click="apply()" :disabled="inProgress" class="btn btn-warning w-full mt-2">
+    <label @click="apply()" :disabled="inProgress" class="btn btn-warning w-full mt-4">
       Обновить
     </label>
   </div>

@@ -125,9 +125,10 @@ export const actions = {
       if (value < 0) costsYesterdaySum += value
       else incomeYesterdaySum += value
 
-    for (const [key, value] of Object.entries(context.$store.monthChanges))
-      if (value < 0) costsMonthSum += value
-      else incomeMonthSum += value
+    if (context.$store.monthChanges !== undefined)
+      for (const [key, value] of Object.entries(context.$store.monthChanges))
+        if (value < 0) costsMonthSum += value
+        else incomeMonthSum += value
 
     var result = {}
 
@@ -192,6 +193,8 @@ export const actions = {
     }
 
     context.$store.commit("setCostsPrepared", costs)
+
+    await this.reloadGenericStatistics(context, session)
   },
 
   apiPostRequest(path, args, baseURL){

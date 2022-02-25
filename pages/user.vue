@@ -9,8 +9,14 @@
           <sessions-panel class="row-span-2"></sessions-panel>
           <password-changer-panel class="row-span-2"></password-changer-panel>
           <receipt-token-panel class="row-span-1"></receipt-token-panel>
-        </div>
 
+          <template v-if="user.isAdmin">
+            <hr class="lg:col-span-3">
+            <user-list-panel class="row-span-2" ref="userList"></user-list-panel>
+            <register-user-panel :user-list="reloadUsers"></register-user-panel>
+          </template>
+
+        </div>
       </div>
 
       <modals></modals>
@@ -30,14 +36,31 @@ import UserPanel from "../components/panels/user/userPanel";
 import SessionsPanel from "../components/panels/user/sessionsPanel";
 import ReceiptTokenPanel from "../components/panels/user/receiptTokenPanel";
 import PasswordChangerPanel from "../components/panels/user/passwordChangerPanel";
+import RegisterUserPanel from "../components/panels/user/admin/registerUserPanel";
+import UserListPanel from "../components/panels/user/admin/userListPanel";
 
 export default {
   name: "user",
   middleware: 'auth',
-  components: {PasswordChangerPanel, ReceiptTokenPanel, SessionsPanel, UserPanel, FooterPanel, Modals, Accounts, Navbar},
+  components: {
+    UserListPanel,
+    RegisterUserPanel,
+    PasswordChangerPanel, ReceiptTokenPanel, SessionsPanel, UserPanel, FooterPanel, Modals, Accounts, Navbar},
 
   mounted() {
 
+  },
+
+  computed: {
+    user: function (){
+      return this.$store.state.user;
+    },
+  },
+
+  methods: {
+    reloadUsers(page) {
+      this.$refs.userList.changePageG(page)
+    }
   },
 
   beforeMount() {

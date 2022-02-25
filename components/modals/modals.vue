@@ -64,6 +64,17 @@
       <input type="checkbox" id="qr-scanner-modal" class="modal-toggle" :checked="modals['qr-scanner'].showed">
       <q-r-scanner></q-r-scanner>
     </div>
+
+    <div>
+      <input type="checkbox" id="admin-password-changer-modal" class="modal-toggle" :checked="modals['admin-password-changer'].showed">
+      <change-password-user></change-password-user>
+    </div>
+
+    <div>
+      <input type="checkbox" id="admin-notify-user-modal" class="modal-toggle" :checked="modals['admin-notify-user'].showed">
+      <notify-user></notify-user>
+    </div>
+
   </div>
 </template>
 
@@ -81,16 +92,19 @@ import ReceiptTokenSetter from "./receiptTokenSetter";
 import QRScanner from "./QRScanner";
 import TransactionEditor from "./transactionEditor";
 import AccountTransfer from "./accountTransfer";
+import ChangePasswordUser from "./admin/changePasswordUser";
+import NotifyUser from "./admin/notifyUser";
 export default {
   name: "modals",
   components: {
+    ChangePasswordUser,
     AccountTransfer,
     TransactionEditor,
     QRScanner,
     ReceiptTokenSetter,
     RepeatTransactionEditor,
     NewRepeatTransaction,
-    PlanEditor, NewPlan, TagEditor, NewTag, NewTransaction, NewAccount, AccountNameSetter},
+    PlanEditor, NewPlan, TagEditor, NewTag, NewTransaction, NewAccount, AccountNameSetter, NotifyUser},
 
   beforeCreate() {
     this.$store.commit("createModal", "account-name-setter")
@@ -106,6 +120,8 @@ export default {
     this.$store.commit("createModal", "transaction-editor")
     this.$store.commit("createModal", "account-transfer")
     this.$store.commit("createModal", "qr-scanner")
+    this.$store.commit("createModal", "admin-password-changer")
+    this.$store.commit("createModal", "admin-notify-user")
   },
 
   computed: {
