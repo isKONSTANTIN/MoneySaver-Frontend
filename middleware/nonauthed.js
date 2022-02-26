@@ -20,7 +20,7 @@ export default async function ({app, context, redirect, store}) {
       app.$cookies.set("auth_session", session,{maxAge: 60 * 60 * 24 * 7});
       user = result;
     }).catch(e => {
-
+      console.log(e)
     })
 
   if (user !== undefined){
