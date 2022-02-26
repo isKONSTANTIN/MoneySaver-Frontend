@@ -2,7 +2,6 @@ export default async function ({app, context, redirect, store}) {
   const session = app.$cookies.get("auth_session");
 
   if (session == null || session === ""){
-    console.log(app.$cookies.getAll())
     return
   }
 
