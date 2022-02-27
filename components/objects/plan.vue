@@ -84,16 +84,16 @@ export default {
     completePlan(){
       const session = this.$cookies.get("auth_session");
 
-      actions.apiPostRequest("plans/complete?token=" + session, {id: this.plan.id}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("plans/complete?token=" + session, {id: this.plan.id}, this)
         .then(() => {
-          actions.preloadData(this, session)
+          actions.preloadData(this, session, true)
         })
     },
 
     failPlan(){
       const session = this.$cookies.get("auth_session");
 
-      actions.apiPostRequest("plans/fail?token=" + session, {id: this.plan.id}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("plans/fail?token=" + session, {id: this.plan.id}, this)
         .then(() => {
           actions.reloadPlans(this, session)
         })

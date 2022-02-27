@@ -139,9 +139,9 @@ export default {
       const session = this.$cookies.get("auth_session");
       this.inProgress = true;
 
-      actions.apiPostRequest("transactions/add?token=" + session, {delta: delta, tag: tag.id, date: parseInt(time), account: account.id, description: this.description}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("transactions/add?token=" + session, {delta: delta, tag: tag.id, date: parseInt(time), account: account.id, description: this.description}, this)
         .then(() => {
-          actions.preloadData(this, session)
+          actions.preloadData(this, session, true)
           this.$store.commit('hideModal', 'new-transaction')
         })
         .catch((e) => {
@@ -165,9 +165,8 @@ export default {
           data: {
             resultFunc: (d) => {
               const session = this.$cookies.get("auth_session");
-
-              fetch(this.$axios.defaults.baseURL + "api/receipt/check?token=" + session + "&args=" + btoa(d))
-                .then(response => response.json())
+              this.$axios.get("/receipt/check?token=" + session + "&args=" + btoa(d))
+                .then(response => response.data)
                 .then(result => {
                     if (result.code === 1){
                       var data = result.data.json

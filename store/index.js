@@ -28,10 +28,9 @@ export const actions = {
               if (!subscription) {
                 var publicKey = ""
 
-                await fetch(context.$axios.defaults.baseURL + "api/pushing/publicKey?token=" + session)
-                  .then(response => response.text())
+                await app.$axios.get("/pushing/publicKey?token=" + session)
                   .then(result => {
-                    publicKey = result
+                    publicKey = result.data
                   })
 
                 await serviceWorkerRegistration.pushManager
@@ -52,48 +51,73 @@ export const actions = {
       });
   },
 
-  reloadAccounts(context, session){
-    fetch(context.$axios.defaults.baseURL + "api/accounts?token=" + session)
-      .then(response => response.json())
+  async reloadAccounts(context, session, force = false){
+    var r
+
+    if (!force && Object.keys(context.$store.state.accounts).length !== 0)
+      return
+
+    console.log("LOAD ACCOUNTS: ")
+    console.log(context.$store.state.accounts)
+    await context.$axios.get("/accounts?token=" + session)
+      .then(response => response.data)
       .then(result => {
         context.$store.commit("setAccounts", result)
-        var accountsMap = {}
-
-        result.map((obj) => {
-          accountsMap[obj.id] = obj
-        })
-
-        context.$store.commit("setAccountsMap", accountsMap)
+        r = result
       })
+
+    var accountsMap = {}
+
+    r.map((obj) => {
+      accountsMap[obj.id] = obj
+    })
+
+    context.$store.commit("setAccountsMap", accountsMap)
+    return {a: r, am: accountsMap}
   },
 
-  reloadTransactions(context, session){
-    fetch(context.$axios.defaults.baseURL + "api/transactions?token=" + session + "&count=5")
-      .then(response => response.json())
+  async reloadTransactions(context, session, force = false){
+    if (!force && !Object.keys(context.$store.state.accounts).length === 0)
+      return
+
+    return await context.$axios.get("/transactions?token=" + session + "&count=5")
+      .then(response => response.data)
       .then(result => {
         context.$store.commit("setShortTransactions", result)
+        return result
       })
   },
 
-  reloadPlans(context, session) {
-    fetch(context.$axios.defaults.baseURL + "api/plans?token=" + session)
-      .then(response => response.json())
+  async reloadPlans(context, session, force = false){
+    if (!force && Object.keys(context.$store.state.plans).length !== 0)
+      return
+
+    return await context.$axios.get("/plans?token=" + session)
+      .then(response => response.data)
       .then(result => {
         context.$store.commit("setPlans", result)
+        return result
       })
   },
 
-  reloadUser(context, session) {
-    fetch(context.$axios.defaults.baseURL + "api/user?token=" + session)
-      .then(response => response.json())
+  async reloadUser(context, session, force = false){
+    if (!force && Object.keys(context.$store.state.user).length !== 0)
+      return
+
+    return await context.$axios.get("/user?token=" + session)
+      .then(response => response.data)
       .then(result => {
         context.$store.commit("setUser", result);
+        return result
       }).catch(e => {
 
       })
   },
 
-  async reloadGenericStatistics(context, session) {
+  async reloadGenericStatistics(context, session, force = false){
+    if (!force && Object.keys(context.$store.state.genericStatistics).length !== 0)
+      return
+
     var date = new Date()
 
     const tyear = date.getFullYear()
@@ -125,8 +149,8 @@ export const actions = {
       if (value < 0) costsYesterdaySum += value
       else incomeYesterdaySum += value
 
-    if (context.$store.monthChanges !== undefined)
-      for (const [key, value] of Object.entries(context.$store.monthChanges))
+    if (context.$store.state.monthChanges !== undefined)
+      for (const [key, value] of Object.entries(context.$store.state.monthChanges))
         if (value < 0) costsMonthSum += value
         else incomeMonthSum += value
 
@@ -141,51 +165,38 @@ export const actions = {
     result.incomeMonthSum = Number(incomeMonthSum.toFixed(2));
 
     context.$store.commit("setGenericStatistics", result);
-  },
-
-  async getCostsAtDay(context, session,year, month, day) {
-    var result
-
-    await fetch(context.$axios.defaults.baseURL + "api/info/dayChanges?token=" + session + "&year=" + year + "&month=" + month + "&day=" + day)
-      .then(response => response.json())
-      .then(r => {
-        result = r
-      })
-      .catch((e) => {
-        console.log(e)
-      })
 
     return result
   },
 
-  async preloadData(context, session) {
-    this.reloadAccounts(context, session)
-    this.reloadTransactions(context, session)
-    this.reloadPlans(context, session)
-
-    await fetch(context.$axios.defaults.baseURL + "api/info/monthChanges?token=" + session)
-      .then(response => response.json())
-      .then(result => {
-        context.$store.commit("setMonthChanges", result)
+  async getCostsAtDay(context, session,year, month, day) {
+    return await context.$axios.get("/info/dayChanges?token=" + session + "&year=" + year + "&month=" + month + "&day=" + day)
+      .then(response => response.data)
+      .then(r => {
+        return r
       })
-
-    await fetch(context.$axios.defaults.baseURL + "api/tags?token=" + session)
-      .then(response => response.json())
-      .then(result => {
-        context.$store.commit("setTags", result)
+      .catch((e) => {
+        console.log(e)
       })
+  },
 
-    var tagsMap = {}
+  async reloadMonthChanges(context, session, force = false){
+    if (!force && Object.keys(context.$store.state.monthChanges).length !== 0)
+      return
+
+    var r = undefined
+
+    await context.$axios.get("/info/monthChanges?token=" + session)
+        .then(response => response.data)
+        .then(result => {
+          context.$store.commit("setMonthChanges", result)
+          r = result
+        })
+
     var costs = []
+    var tagsMap = context.$store.state.tagsMap
 
-    context.$store.state.tags.map((obj) => {
-      tagsMap[obj.id] = obj
-    })
-
-    context.$store.commit("setTagsMap", tagsMap)
-
-    for (const [key, value] of Object.entries(context.$store.state.monthChanges)) {
-
+    for (const [key, value] of Object.entries(r)) {
       var tag = tagsMap[key];
 
       if (tag !== undefined && tag.kind === -1)
@@ -194,50 +205,54 @@ export const actions = {
 
     context.$store.commit("setCostsPrepared", costs)
 
-    await this.reloadGenericStatistics(context, session)
+    return {ms: r, cp: costs}
   },
 
-  apiPostRequest(path, args, baseURL){
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json; charset=utf-8"},
-      body: JSON.stringify(args)
-    };
+  async reloadTags(context, session, force = false){
+    if (!force && Object.keys(context.$store.state.tags).length !== 0)
+      return
 
-    return fetch(baseURL + "api/" + path, requestOptions)
-      .then(async response => {
-        if (!response.ok) {
-          var text = ""
-          var error = Error(response.statusText)
+    var r
 
-          await response.text()
-            .then(t => {
-              text = t
-            })
-            .catch((e) => {console.log(e)})
-            .finally(() => {
-              error = Error(response.statusText + ": " + text)
-            })
-          throw error
-        } else
-          return response
+    await context.$axios.get("/tags?token=" + session)
+      .then(response => response.data)
+      .then(result => {
+        context.$store.commit("setTags", result)
+        r = result
       })
+
+    var tagsMap = {}
+
+    r.map((obj) => {
+      tagsMap[obj.id] = obj
+    })
+
+    context.$store.commit("setTagsMap", tagsMap)
+
+    return {t: r, tm: tagsMap}
   },
 
-  apiPostRequestRaw(url, args){
-    const requestOptions = {
-      method: "POST",
-      body: args
-    };
+  async preloadData(context, session, force = false) {
+    await Promise.all([
+      this.reloadAccounts(context, session, force),
+      this.reloadTransactions(context, session, force),
+      this.reloadPlans(context, session, force),
+      this.reloadTags(context, session, force)
+    ]).then((r) => {
 
-    return fetch(url, requestOptions)
-      .then(response => {
-        if (!response.ok)
-          throw Error(response.statusText);
+    }).catch(e => {
+      console.log(e)
+    })
 
-        return response
-      })
-  }
+    await this.reloadMonthChanges(context, session, force)
+    await this.reloadGenericStatistics(context, session, force)
+  },
+
+  apiPostRequest(path, args, context){
+    return context.$axios.post("/" + path, JSON.stringify(args), {
+      headers: {"Content-Type": "application/json; charset=utf-8"}
+    })
+  },
 }
 
 export const state = () => ({

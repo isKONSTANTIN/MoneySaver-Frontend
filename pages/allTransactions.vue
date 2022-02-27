@@ -127,18 +127,22 @@ export default {
     loadTransactions(page){
       const session = this.$cookies.get("auth_session");
 
-      fetch(this.$axios.defaults.baseURL + "api/transactions?token=" + session + "&count=25" + "&offset=" + ((page - 1) * 25))
-        .then(response => response.json())
+      this.$axios.get("/transactions?token=" + session + "&count=25" + "&offset=" + ((page - 1) * 25))
+        .then(response => response.data)
         .then(result => {
           this.transactions = result
         })
     }
   },
 
-  beforeMount() {
-    const session = this.$cookies.get("auth_session");
 
-    actions.preloadData(this, session)
+  async asyncData({$cookies, $axios, store}) {
+    const session = $cookies.get("auth_session");
+
+    await actions.preloadData({$axios: $axios, $store: store}, session)
+  },
+
+  beforeMount() {
     this.loadTransactions(this.page)
 
     this.$store.commit("setModalHideEvent", {

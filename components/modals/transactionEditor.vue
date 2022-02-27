@@ -119,7 +119,7 @@ export default {
       const session = this.$cookies.get("auth_session");
       this.inProgress = true;
 
-      actions.apiPostRequest("transactions/cancel?token=" + session, {id: this.id}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("transactions/cancel?token=" + session, {id: this.id}, this)
         .then(() => {
           this.$store.commit('hideModal', 'transaction-editor')
         })
@@ -177,9 +177,9 @@ export default {
       const session = this.$cookies.get("auth_session");
       this.inProgress = true;
 
-      actions.apiPostRequest("transactions/edit?token=" + session, {id: this.id, delta: delta, tag: tag.id, date: parseInt(time), account: account.id, description: this.description}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("transactions/edit?token=" + session, {id: this.id, delta: delta, tag: tag.id, date: parseInt(time), account: account.id, description: this.description}, this)
         .then(() => {
-          actions.preloadData(this, session)
+          actions.preloadData(this, session, true)
           this.$store.commit('hideModal', 'transaction-editor')
         })
         .catch((e) => {

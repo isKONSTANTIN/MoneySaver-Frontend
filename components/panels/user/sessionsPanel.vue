@@ -46,9 +46,8 @@ export default {
   methods:{
     loadSessions() {
       const session = this.$cookies.get("auth_session");
-
-      fetch(this.$axios.defaults.baseURL + "api/user/getSessions?token=" + session)
-        .then(response => response.json())
+      this.$axios.get("/user/getSessions?token=" + session)
+        .then(response => response.data())
         .then(result => {
           this.sessions = result
 
@@ -68,7 +67,7 @@ export default {
 
       const session = this.$cookies.get("auth_session");
 
-      actions.apiPostRequest("user/deactivateSession?token=" + session, {session: old}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("user/deactivateSession?token=" + session, {session: old}, this)
         .then(() => {
           this.loadSessions()
         })

@@ -54,7 +54,7 @@ export default {
       actions.apiPostRequest("accounts/setName?token=" + session, {
         id: account.id,
         name: this.newName
-      }, this.$axios.defaults.baseURL)
+      }, this)
         .then(() => {
           actions.reloadAccounts(this, session)
           this.$store.commit('hideModal', 'account-name-setter')

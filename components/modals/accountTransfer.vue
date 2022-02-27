@@ -112,7 +112,7 @@ export default {
       const session = this.$cookies.get("auth_session");
       this.inProgress = true;
 
-      actions.apiPostRequest("accounts/transfer?token=" + session, {from: this.accounts[this.fromId].id, to: this.accounts[this.toId].id, amount: this.amount}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("accounts/transfer?token=" + session, {from: this.accounts[this.fromId].id, to: this.accounts[this.toId].id, amount: this.amount}, this)
         .then(() => {
           actions.reloadAccounts(this, session)
           this.$store.commit('hideModal', 'account-transfer')

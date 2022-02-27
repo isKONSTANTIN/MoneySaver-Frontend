@@ -65,8 +65,14 @@ export default {
   ],
 
   axios: {
-    baseURL: process.env.NODE_ENV === 'production' ? "/" : "http://localhost:8080/"
+    proxy: true,
+    prefix: '/api'
   },
+
+  proxy: {
+    '/api/': { target: process.env.NODE_ENV === 'production' ? "http://backend/" : "http://localhost:8080/", pathRewrite: { '^/api/': '/api/' } }
+  },
+
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

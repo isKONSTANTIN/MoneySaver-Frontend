@@ -59,11 +59,11 @@ export default {
   methods: {
     apply(){
       this.error = false;
-      actions.apiPostRequest("user/auth", {email: this.email, password: this.password}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("user/auth", {email: this.email, password: this.password}, this)
         .catch(r => {
           this.error = true
         })
-        .then(response => response.json())
+        .then(response => response.data)
         .then((r) => {
           this.$cookies.set("auth_session", r.token,{maxAge: 60 * 60 * 24 * 7});
           this.$router.push('/');

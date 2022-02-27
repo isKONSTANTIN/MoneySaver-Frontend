@@ -162,7 +162,7 @@ export default {
       const session = this.$cookies.get("auth_session");
       this.inProgress = true;
 
-      actions.apiPostRequest("transactions/repeat/remove?token=" + session, {id: this.id}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("transactions/repeat/remove?token=" + session, {id: this.id}, this)
         .then(() => {
           this.$store.commit('hideModal', 'repeat-transaction-editor')
         })
@@ -211,9 +211,9 @@ export default {
       const session = this.$cookies.get("auth_session");
       this.inProgress = true;
 
-      actions.apiPostRequest("transactions/repeat/edit?token=" + session, {id: this.id, delta: delta, tag: tag.id, account: account.id, repeatArg: repeatArg, lastRepeat: parseInt(lastRepeat), repeatFunc: repeatFunc, description: this.description}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("transactions/repeat/edit?token=" + session, {id: this.id, delta: delta, tag: tag.id, account: account.id, repeatArg: repeatArg, lastRepeat: parseInt(lastRepeat), repeatFunc: repeatFunc, description: this.description}, this)
         .then(() => {
-          actions.preloadData(this, session)
+          actions.preloadData(this, session, true)
           this.$store.commit('hideModal', 'repeat-transaction-editor')
         })
         .catch((e) => {

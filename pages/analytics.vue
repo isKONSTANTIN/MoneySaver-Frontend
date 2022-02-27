@@ -303,8 +303,8 @@ export default {
 
       var data = {}
 
-      await fetch(this.$axios.defaults.baseURL + "api/info/yearChanges?token=" + session + "&year=" + this.year)
-        .then(response => response.json())
+      await this.$axios.get("/info/yearChanges?token=" + session + "&year=" + this.year)
+        .then(response => response.data)
         .then(result => {
           data = result;
         })
@@ -327,10 +327,15 @@ export default {
     }
   },
 
-  async mounted() {
-    const session = this.$cookies.get("auth_session");
+  async asyncData({$cookies, $axios, store}) {
+    const session = $cookies.get("auth_session");
 
-    await actions.preloadData(this, session)
+    var context = {$axios: $axios, $store: store}
+
+    await actions.preloadData(context, session)
+  },
+
+  async mounted() {
     await this.loadData()
   }
 }

@@ -128,19 +128,21 @@ export default {
 
     loadPlans(page){
       const session = this.$cookies.get("auth_session");
-
-      fetch(this.$axios.defaults.baseURL + "api/plans/all?token=" + session + "&count=25" + "&offset=" + ((page - 1) * 25))
-        .then(response => response.json())
+      this.$axios.get("/plans/all?token=" + session + "&count=25" + "&offset=" + ((page - 1) * 25))
+        .then(response => response.data)
         .then(result => {
           this.allPlans = result
         })
     }
   },
 
-  beforeMount() {
-    const session = this.$cookies.get("auth_session");
+  async asyncData({$cookies, $axios, store}) {
+    const session = $cookies.get("auth_session");
 
-    actions.preloadData(this, session)
+    await actions.preloadData({$axios: $axios, $store: store}, session)
+  },
+
+  beforeMount() {
     this.loadPlans(this.page)
 
     this.$store.commit("setModalHideEvent", {

@@ -7,7 +7,7 @@ export default async function ({app, context, redirect, store}) {
 
   var user = undefined
 
-  await app.$axios.get("api/user?token=" + session)
+  await app.$axios.get("/user?token=" + session)
     .then(result => {
       store.commit("setUser", result);
       app.$cookies.set("auth_session", session,{maxAge: 60 * 60 * 24 * 7});

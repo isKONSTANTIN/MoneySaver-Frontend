@@ -88,7 +88,7 @@ export default {
       }
 
       this.inProgress = true;
-      actions.apiPostRequest("user/updateReceiptToken?token=" + session, {receipt: this.token}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("user/updateReceiptToken?token=" + session, {receipt: this.token}, this)
         .then(() => {
           actions.reloadUser(this, session)
           this.$store.commit('hideModal', 'receipt-token-setter')

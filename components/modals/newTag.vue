@@ -69,9 +69,9 @@ export default {
       var kind = this.kind === "Доходы" ? 1 : (this.kind === "Расходы" ? -1 : 0)
 
       this.inProgress = true;
-      actions.apiPostRequest("tags/add?token=" + session, {name: this.name, kind: kind, limit: this.limit}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("tags/add?token=" + session, {name: this.name, kind: kind, limit: this.limit}, this)
         .then(() => {
-          actions.preloadData(this, session)
+          actions.preloadData(this, session, true)
           this.$store.commit('hideModal', 'new-tag')
         })
         .catch((e) => {

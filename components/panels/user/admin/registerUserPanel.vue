@@ -57,7 +57,7 @@ export default {
       const session = this.$cookies.get("auth_session");
 
       this.inProgress = true
-      actions.apiPostRequest("admin/registerUser?token=" + session, {email: this.email, password: this.password}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("admin/registerUser?token=" + session, {email: this.email, password: this.password}, this)
         .then(() => {
           this.email = ""
           this.password = ""

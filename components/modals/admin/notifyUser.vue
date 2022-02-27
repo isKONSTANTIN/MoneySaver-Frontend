@@ -62,7 +62,7 @@ export default {
       const session = this.$cookies.get("auth_session");
 
       this.inProgress = true
-      actions.apiPostRequest("admin/sendNotificationToUser?token=" + session, {email: this.user.email, title: this.title, text: this.text}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("admin/sendNotificationToUser?token=" + session, {email: this.user.email, title: this.title, text: this.text}, this)
         .then(r => r.json())
         .then((r) => {
           this.$store.commit('hideModal', 'admin-notify-user');

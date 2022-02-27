@@ -45,7 +45,7 @@ export default {
       const session = this.$cookies.get("auth_session");
 
       this.inProgress = true;
-      actions.apiPostRequest("accounts/add?token=" + session, {name: this.name}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("accounts/add?token=" + session, {name: this.name}, this)
         .then(() => {
           actions.reloadAccounts(this, session)
           this.$store.commit('hideModal', 'new-account')

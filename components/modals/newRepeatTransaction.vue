@@ -165,9 +165,9 @@ export default {
       const session = this.$cookies.get("auth_session");
 
       this.inProgress = true
-      actions.apiPostRequest("transactions/repeat/add?token=" + session, {delta: delta, tag: tag.id, account: account.id, repeatArg: repeatArg, startRepeat: parseInt(startRepeat), repeatFunc: repeatFunc, description: this.description}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("transactions/repeat/add?token=" + session, {delta: delta, tag: tag.id, account: account.id, repeatArg: repeatArg, startRepeat: parseInt(startRepeat), repeatFunc: repeatFunc, description: this.description}, this)
         .then(() => {
-          actions.preloadData(this, session)
+          actions.preloadData(this, session, true)
           this.$store.commit('hideModal', 'new-repeat-transaction')
         })
         .catch((e) => {

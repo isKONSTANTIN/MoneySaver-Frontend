@@ -63,11 +63,13 @@ export default {
     }
   },
 
-  beforeMount() {
-    const session = this.$cookies.get("auth_session");
+  async asyncData({$cookies, $axios, store}) {
+    const session = $cookies.get("auth_session");
 
-    actions.preloadData(this, session)
-  }
+    var context = {$axios: $axios, $store: store}
+
+    await actions.preloadData(context, session)
+  },
 }
 </script>
 

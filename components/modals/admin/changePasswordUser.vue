@@ -53,7 +53,7 @@ export default {
       const session = this.$cookies.get("auth_session");
 
       this.inProgress = true
-      actions.apiPostRequest("admin/changeUserPassword?token=" + session, {email: this.user.email, password: this.newPassword}, this.$axios.defaults.baseURL)
+      actions.apiPostRequest("admin/changeUserPassword?token=" + session, {email: this.user.email, password: this.newPassword}, this)
         .then(() => {
           this.$cookies.remove("auth_session");
           this.$router.push("/auth")

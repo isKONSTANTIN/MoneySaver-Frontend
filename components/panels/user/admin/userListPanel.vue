@@ -81,9 +81,8 @@ export default {
 
     loadUsers(page){
       const session = this.$cookies.get("auth_session");
-
-      fetch(this.$axios.defaults.baseURL + "api/admin/getUsers?token=" + session + "&count=25" + "&offset=" + ((page - 1) * 25))
-        .then(response => response.json())
+      this.$axios.get("/admin/getUsers?token=" + session + "&count=25" + "&offset=" + ((page - 1) * 25))
+        .then(response => response.data)
         .then(result => {
           this.users = result
         })
