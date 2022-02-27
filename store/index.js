@@ -57,8 +57,6 @@ export const actions = {
     if (!force && Object.keys(context.$store.state.accounts).length !== 0)
       return
 
-    console.log("LOAD ACCOUNTS: ")
-    console.log(context.$store.state.accounts)
     await context.$axios.get("/accounts?token=" + session)
       .then(response => response.data)
       .then(result => {

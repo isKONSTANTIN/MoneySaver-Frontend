@@ -70,9 +70,8 @@ export default {
   },
 
   proxy: {
-    '/api/': { target: process.env.NODE_ENV === 'production' ? "http://backend/" : "http://localhost:8080/", pathRewrite: { '^/api/': '/api/' } }
+    '/api/': { target: process.env.NODE_ENV === 'production' ? "http://backend:8080/" : "http://localhost:8080/", pathRewrite: { '^/api/': '/api/' } }
   },
-
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
