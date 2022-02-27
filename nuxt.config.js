@@ -64,10 +64,6 @@ export default {
     'cookie-universal-nuxt'
   ],
 
-  axios: {
-    baseURL: process.env.BASE_URL
-  },
-
   publicRuntimeConfig: {
     axios: {
       baseURL: process.env.BASE_URL
