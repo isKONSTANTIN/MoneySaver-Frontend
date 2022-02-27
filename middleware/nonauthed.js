@@ -7,7 +7,7 @@ export default async function ({app, context, redirect, store}) {
 
   var user = undefined
 
-  await fetch(app.$axios.defaults.baseURL + "api/user?token=" + session)
+  await fetch("http://backend/api/user?token=" + session)
     .then(response => {
       if (!response.ok)
         throw Error(response.statusText);
