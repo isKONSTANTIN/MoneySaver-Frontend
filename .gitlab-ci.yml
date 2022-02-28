@@ -8,6 +8,7 @@ build:
       - building/nuxt
       - building/static
       - building/package.json
+      - building/nuxt.config.js
       - building/start.sh
 deploy:
   stage: deploy
