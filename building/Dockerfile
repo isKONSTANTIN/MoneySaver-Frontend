@@ -12,5 +12,6 @@ COPY nuxt ./.nuxt
 COPY static ./static
 COPY package.json ./package.json
 COPY start.sh ./start.sh
+COPY nuxt.config.js ./nuxt.config.js
 
 ENTRYPOINT ["./start.sh"]
