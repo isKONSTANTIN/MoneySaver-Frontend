@@ -47,7 +47,7 @@ export default {
     loadSessions() {
       const session = this.$cookies.get("auth_session");
       this.$axios.get("/user/getSessions?token=" + session)
-        .then(response => response.data())
+        .then(response => response.data)
         .then(result => {
           this.sessions = result
 
