@@ -28,7 +28,7 @@
         </svg>
         повтор. транзакция
       </button>
-      <button class="btn btn-sm bg-neutral text-neutral-content" @click="$store.commit('showModal', {'name': 'account-transfer'})">
+      <button v-if="Object.keys(accounts).length > 1" class="btn btn-sm bg-neutral text-neutral-content" @click="$store.commit('showModal', {'name': 'account-transfer'})">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
         </svg>
@@ -40,8 +40,16 @@
 </template>
 
 <script>
+import Account from "../objects/account";
+
 export default {
-  name: "actions"
+  name: "actions",
+  components: {Account},
+  computed: {
+    accounts: function (){
+      return this.$store.state.accounts;
+    },
+  },
 }
 </script>
 

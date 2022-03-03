@@ -47,7 +47,7 @@ export default {
       this.inProgress = true;
       actions.apiPostRequest("accounts/add?token=" + session, {name: this.name}, this)
         .then(() => {
-          actions.reloadAccounts(this, session)
+          actions.reloadAccounts(this, session, true)
           this.$store.commit('hideModal', 'new-account')
         })
         .catch(e => {

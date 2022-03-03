@@ -114,7 +114,7 @@ export default {
 
       actions.apiPostRequest("accounts/transfer?token=" + session, {from: this.accounts[this.fromId].id, to: this.accounts[this.toId].id, amount: this.amount}, this)
         .then(() => {
-          actions.reloadAccounts(this, session)
+          actions.reloadAccounts(this, session, true)
           this.$store.commit('hideModal', 'account-transfer')
         })
         .catch((e) => {

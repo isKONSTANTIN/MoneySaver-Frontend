@@ -56,6 +56,10 @@ export default {
     }
   },
 
+  mounted() {
+    this.$store.dispatch("server/preloadData", this, "", false)
+  },
+
   methods: {
     apply(){
       this.error = false;

@@ -159,7 +159,7 @@ export default {
         state: this.state === "Не выполнен" ? -1 : (this.state === "Выполнен" ? 1 : 0)
       }, this)
         .then(() => {
-          actions.reloadPlans(this, session)
+          actions.reloadPlans(this, session, true)
           this.$store.commit('hideModal', 'plan-editor')
         })
         .catch((e) => {

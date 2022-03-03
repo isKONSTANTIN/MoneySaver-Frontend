@@ -1,7 +1,6 @@
 import Vue from "vue";
 
 export const actions = {
-
   urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
     const base64 = (base64String + padding)
@@ -232,6 +231,7 @@ export const actions = {
 
   async preloadData(context, session, force = false) {
     await Promise.all([
+      context.$store.dispatch("server/preloadData", context, session, force),
       this.reloadAccounts(context, session, force),
       this.reloadTransactions(context, session, force),
       this.reloadPlans(context, session, force),

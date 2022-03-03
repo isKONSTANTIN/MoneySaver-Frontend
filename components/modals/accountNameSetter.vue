@@ -56,7 +56,7 @@ export default {
         name: this.newName
       }, this)
         .then(() => {
-          actions.reloadAccounts(this, session)
+          actions.reloadAccounts(this, session, true)
           this.$store.commit('hideModal', 'account-name-setter')
           this.newName = ""
         }).finally(() => {
