@@ -41,7 +41,7 @@ import UserListPanel from "../components/panels/user/admin/userListPanel";
 
 export default {
   name: "user",
-  middleware: 'auth',
+  middleware: ['serverRequired', 'auth'],
   components: {
     UserListPanel,
     RegisterUserPanel,

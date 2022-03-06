@@ -22,11 +22,12 @@
                 В случае проблем со входом, обратитесь к администратору
               </label>
               <label class="label text-2xs text-error" v-else>
-                Неправильный логин или пароль. Попробуйте еще раз
+                Неправильный логин или пароль
               </label>
             </div>
 
-            <div class="modal-action mt-2">
+            <div class="modal-action mt-2 justify-between">
+              <NuxtLink v-if="registration" to="/registration" class="btn btn-primary">Регистрация</NuxtLink>
               <label @click="apply()" class="btn btn-success">
                 Войти
               </label>
@@ -45,7 +46,7 @@ import FooterPanel from "../components/panels/footerPanel";
 import {actions} from "../store";
 export default {
   name: "auth",
-  middleware: 'nonauthed',
+  middleware: ['serverRequired', 'nonauthed'],
   components: {FooterPanel},
 
   data() {
@@ -56,8 +57,10 @@ export default {
     }
   },
 
-  mounted() {
-    this.$store.dispatch("server/preloadData", this, "", false)
+  computed: {
+    registration: function (){
+      return this.$store.state.server.registration;
+    },
   },
 
   methods: {

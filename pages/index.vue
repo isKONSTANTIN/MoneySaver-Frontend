@@ -37,7 +37,7 @@ import FooterPanel from "../components/panels/footerPanel";
 import GeneralStatistics from "../components/panels/generalStatistics";
 export default {
   name: 'IndexPage',
-  middleware: 'auth',
+  middleware: ['serverRequired', 'auth'],
   components: {GeneralStatistics, FooterPanel, Plans, Actions, Transactions, MonthStatistics, Modals, Accounts, Navbar},
 
   mounted() {

@@ -73,7 +73,7 @@ import FooterPanel from "../components/panels/footerPanel";
 
 export default {
   name: "allPlans",
-  middleware: 'auth',
+  middleware: ['serverRequired', 'auth'],
   components: {FooterPanel, ListedTag, Actions, Transactions, MonthStatistics, Modals, Accounts, Navbar},
 
   data() {

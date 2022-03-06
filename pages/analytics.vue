@@ -90,7 +90,7 @@ import Modals from "../components/modals/modals";
 
 export default {
   name: "analytics",
-  middleware: 'auth',
+  middleware: ['serverRequired', 'auth'],
   components: {BarChart, DoughnutChart, LineChart, FooterPanel, Navbar, Modals},
 
   data() {
