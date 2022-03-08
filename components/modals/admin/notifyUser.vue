@@ -63,10 +63,10 @@ export default {
 
       this.inProgress = true
       actions.apiPostRequest("admin/sendNotificationToUser?token=" + session, {email: this.user.email, title: this.title, text: this.text}, this)
-        .then(r => r.json())
-        .then((r) => {
+        .then(response => response.data)
+        .then((response) => {
           this.$store.commit('hideModal', 'admin-notify-user');
-          console.log("sended to " + r.devices + " devices")
+          console.log("sended to " + response.devices + " devices")
         })
         .catch((e) => {
           this.error = "Неизвестная ошибка!"
