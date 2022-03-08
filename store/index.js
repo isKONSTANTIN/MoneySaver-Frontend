@@ -40,7 +40,7 @@ export const actions = {
                     subscribe = s.toJSON();
                   });
 
-                actions.apiPostRequest("pushing/setNotificationData?token=" + session, {endpoint: subscribe.endpoint, auth: subscribe.keys.auth, p256dh: subscribe.keys.p256dh}, context.$axios.defaults.baseURL)
+                actions.apiPostRequest("pushing/setNotificationData?token=" + session, {endpoint: subscribe.endpoint, auth: subscribe.keys.auth, p256dh: subscribe.keys.p256dh}, context)
                   .then(() => {})
               }
             } catch (e) {
