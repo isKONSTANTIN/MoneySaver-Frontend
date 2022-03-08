@@ -27,7 +27,7 @@ export const actions = {
               if (!subscription) {
                 var publicKey = ""
 
-                await app.$axios.get("/pushing/publicKey?token=" + session)
+                await context.$axios.get("/pushing/publicKey?token=" + session)
                   .then(result => {
                     publicKey = result.data
                   })
