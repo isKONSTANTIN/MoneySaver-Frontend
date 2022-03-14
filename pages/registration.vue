@@ -38,7 +38,7 @@
 
               <div class="modal-action mt-2 justify-between">
                 <NuxtLink v-if="registration" to="/auth" class="btn btn-primary">Назад</NuxtLink>
-                <label @click="apply()" class="btn btn-success">
+                <label @click="apply()" :disabled="inProgress" class="btn btn-success">
                   Зарегистрироваться
                 </label>
               </div>
@@ -64,7 +64,8 @@ export default {
       email: "",
       password: "",
       repeatPassword: "",
-      error: ""
+      error: "",
+      inProgress: false
     }
   },
 
@@ -97,6 +98,7 @@ export default {
         this.error = "Пароль слишком короткий! Минимум 6 символов"
         return
       }
+      this.inProgress = true
 
       actions.apiPostRequest("user/registration", {email: this.email, password: this.password}, this)
         .catch(r => {
@@ -106,6 +108,8 @@ export default {
         .then((r) => {
           this.$cookies.set("auth_session", r.token,{maxAge: 60 * 60 * 24 * 7});
           this.$router.push('/');
+        }).finally(() => {
+          this.inProgress = false
         })
     }
   }

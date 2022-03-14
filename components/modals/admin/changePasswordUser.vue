@@ -55,8 +55,7 @@ export default {
       this.inProgress = true
       actions.apiPostRequest("admin/changeUserPassword?token=" + session, {email: this.user.email, password: this.newPassword}, this)
         .then(() => {
-          this.$cookies.remove("auth_session");
-          this.$router.push("/auth")
+          this.$store.commit('hideModal', 'admin-password-changer');
         })
         .catch((e) => {
           if (e.toString().includes("Wrong password"))
