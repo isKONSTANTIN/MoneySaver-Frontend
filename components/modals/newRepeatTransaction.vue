@@ -8,9 +8,10 @@
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="label">
-              <span class="label-text">Сумма</span>
+              <span class="label-text">{{(tag === undefined || tag.kind === 0) ? "Сумма" : (tag.kind === -1 ? "Расход" : "Доход")}}</span>
             </label>
-            <input type="number" v-model="delta" class="input input-bordered w-full">
+            <input v-model="delta" v-bind:class="{'border-red-400': tag !== undefined && tag.kind === -1, 'border-green-400': tag !== undefined && tag.kind === 1}" class="input input-bordered w-full">
+
           </div>
 
           <div>
@@ -26,7 +27,7 @@
         <label class="label">
           <span class="label-text">Тег</span>
         </label>
-        <select v-model="tag" class="select select-bordered w-full">
+        <select v-model="tagName" class="select select-bordered w-full">
           <option v-for="tag in tags">{{tag.name}}</option>
         </select>
 
@@ -107,12 +108,16 @@ export default {
     tags: function (){
       return this.$store.state.tags;
     },
+
+    tag: function () {
+      return this.tags.find(t => t.name === this.tagName)
+    }
   },
 
   data() {
     return {
       delta: 0,
-      tag: "",
+      tagName: "",
       startRepeat: new Date().toISOString().substr(0, 10),
       repeatFunc: "Еженедельно",
       repeatArg: "",
@@ -124,17 +129,23 @@ export default {
     }
   },
 
+  created() {
+    this.$store.commit("setModalShowEvent", {name: 'new-repeat-transaction', func: () => {
+        this.account = Object.values(this.accounts)[0].name;
+      }
+    })
+  },
+
   methods: {
     apply(){
       var days = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"]
       var delta = this.delta;
 
-      var tag = this.tags.find(t => t.name === this.tag)
       var account = this.accounts.find(a => a.name === this.account)
       var repeatFunc = this.repeatFunc === "Еженедельно" ? 0 : (this.repeatFunc === "Ежемесячно" ? 1 : 2)
       var repeatArg = repeatFunc === 0 ? days.findIndex(s => s === this.repeatArg) + 1 : parseInt(this.repeatArg)
 
-      if (tag === undefined){
+      if (this.tag === undefined){
         this.error = "Тег не найден!"
         return;
       }
@@ -154,8 +165,8 @@ export default {
         return;
       }
 
-      if (tag.kind !== 0)
-        delta *= tag.kind;
+      if (this.tag.kind !== 0)
+        delta *= this.tag.kind;
 
       var startRepeat = new Date(this.startRepeat).getTime() / 1000 + 60 * 60 * 9;
 
@@ -165,7 +176,7 @@ export default {
       const session = this.$cookies.get("auth_session");
 
       this.inProgress = true
-      actions.apiPostRequest("transactions/repeat/add?token=" + session, {delta: delta, tag: tag.id, account: account.id, repeatArg: repeatArg, startRepeat: parseInt(startRepeat), repeatFunc: repeatFunc, description: this.description}, this)
+      actions.apiPostRequest("transactions/repeat/add?token=" + session, {delta: delta, tag: this.tag.id, account: account.id, repeatArg: repeatArg, startRepeat: parseInt(startRepeat), repeatFunc: repeatFunc, description: this.description}, this)
         .then(() => {
           actions.preloadData(this, session, true)
           this.$store.commit('hideModal', 'new-repeat-transaction')

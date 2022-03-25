@@ -8,14 +8,14 @@
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="label">
-              <span class="label-text">Сумма</span>
+              <span class="label-text">{{(tag === undefined || tag.kind === 0) ? "Сумма" : (tag.kind === -1 ? "Расход" : "Доход")}}</span>
             </label>
-            <input v-model="delta" @change="calculateDelta" class="input input-bordered w-full">
+            <input v-model="delta" @change="calculateDelta" v-bind:class="{'border-red-400': tag !== undefined && tag.kind === -1, 'border-green-400': tag !== undefined && tag.kind === 1}" class="input input-bordered w-full">
 
             <label class="label">
               <span class="label-text">Тег</span>
             </label>
-            <select v-model="tag" class="select select-bordered w-full">
+            <select v-model="tagName" class="select select-bordered w-full">
               <option v-for="tag in tags">{{tag.name}}</option>
             </select>
           </div>
@@ -77,12 +77,16 @@ export default {
     tags: function (){
       return this.$store.state.tags;
     },
+
+    tag: function () {
+      return this.tags.find(t => t.name === this.tagName)
+    }
   },
 
   data() {
     return {
       delta: 0,
-      tag: "",
+      tagName: "",
       date: new Date().toISOString().substr(0, 10),
       account: "",
       description: "",
@@ -91,6 +95,17 @@ export default {
       inProgress: false,
       error: ""
     }
+  },
+
+  beforeMount() {
+
+  },
+
+  created() {
+    this.$store.commit("setModalShowEvent", {name: 'new-transaction', func: () => {
+        this.account = Object.values(this.accounts)[0].name;
+      }
+    })
   },
 
   methods: {
@@ -110,10 +125,9 @@ export default {
     apply(){
       var delta = this.delta
 
-      var tag = this.tags.find(t => t.name === this.tag)
       var account = this.accounts.find(a => a.name === this.account)
 
-      if (tag === undefined){
+      if (this.tag === undefined){
         this.error = "Тег не найден!"
         return;
       }
@@ -128,8 +142,8 @@ export default {
         return;
       }
 
-      if (tag.kind !== 0)
-        delta *= tag.kind;
+      if (this.tag.kind !== 0)
+        delta *= this.tag.kind;
 
       var time = new Date(this.date).getTime() / 1000 + 60 * 60 * 9;
 
@@ -139,7 +153,7 @@ export default {
       const session = this.$cookies.get("auth_session");
       this.inProgress = true;
 
-      actions.apiPostRequest("transactions/add?token=" + session, {delta: delta, tag: tag.id, date: parseInt(time), account: account.id, description: this.description}, this)
+      actions.apiPostRequest("transactions/add?token=" + session, {delta: delta, tag: this.tag.id, date: parseInt(time), account: account.id, description: this.description}, this)
         .then(() => {
           actions.preloadData(this, session, true)
           this.$store.commit('hideModal', 'new-transaction')
