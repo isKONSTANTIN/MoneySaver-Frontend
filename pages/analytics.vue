@@ -116,7 +116,7 @@ export default {
   methods: {
     downloadReport(){
       const session = this.$cookies.get("auth_session");
-      fetch(this.$axios.defaults.baseURL + "api/info/report?token=" + session + "&year=" + this.year)
+      fetch(this.$axios.defaults.baseURL + "/info/report?token=" + session + "&year=" + this.year)
         .then(res => res.blob())
         .then(blob =>{
           var file = window.URL.createObjectURL(blob)
