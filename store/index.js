@@ -230,6 +230,12 @@ export const actions = {
   },
 
   async preloadData(context, session, force = false) {
+    if (new Date().getTime() - context.$store.state.lastUpdate > 1000 * 60) {
+      force = true;
+    }
+
+    context.$store.commit("lastTimeUpdate");
+
     await Promise.all([
       context.$store.dispatch("server/preloadData", context, session, force),
       this.reloadAccounts(context, session, force),
@@ -254,6 +260,8 @@ export const actions = {
 }
 
 export const state = () => ({
+  lastUpdate: 0,
+
   user: {},
   modals: {},
   accounts: {},
@@ -270,6 +278,10 @@ export const state = () => ({
 })
 
 export const mutations = {
+  lastTimeUpdate(state) {
+    state.lastUpdate = new Date().getTime();
+  },
+
   setGenericStatistics(state, statistics){
     state.genericStatistics = statistics;
   },
