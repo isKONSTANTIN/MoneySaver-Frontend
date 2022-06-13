@@ -16,6 +16,36 @@
 
           </div>
           <hr class="my-2">
+          <div class="flex justify-between items-center">
+            <div class="flex gap-2">
+              <div class="text-sm rounded-box border p-1">
+                <select v-model="filterTag" @change="applyFilter" class="select select-sm">
+                  <option selected>Любой тег</option>
+                  <option v-for="tag in tags">{{tag.name}}</option>
+                </select>
+              </div>
+
+              <div class="text-sm rounded-box border p-1">
+                <select v-model="filterAccount" @change="applyFilter" class="select select-sm">
+                  <option selected>Любой счет</option>
+                  <option v-for="acc in accounts">{{acc.name}}</option>
+                </select>
+              </div>
+
+              <div class="text-sm rounded-box border pl-2 p-1">
+                От: <input type="date" class="input input-sm p-0 pl-1" @change="applyFilter" v-model="filterDataFrom">
+              </div>
+
+              <div class="text-sm rounded-box border pl-2 p-1">
+                До: <input type="date" class="input input-sm p-0 pl-1" @change="applyFilter" v-model="filterDataUpTo">
+              </div>
+
+              <div class="text-sm rounded-box border flex items-center justify-center">
+                <input type="text" placeholder="Описание" v-model="filterDesc" @change="applyFilter" class="input input-sm">
+              </div>
+            </div>
+          </div>
+          <hr class="my-2">
           <div class="overflow-x-auto">
             <table class="table w-full table-compact table-zebra">
               <thead>
@@ -77,7 +107,13 @@ export default {
   data() {
     return {
       transactions: {},
-      page: 1
+      page: 1,
+
+      filterTag: "Любой тег",
+      filterAccount: "Любой счет",
+      filterDesc: "",
+      filterDataFrom: 0,
+      filterDataUpTo: 0
     }
   },
 
@@ -88,6 +124,14 @@ export default {
 
     accountsMap: function () {
       return this.$store.state.accountsMap;
+    },
+
+    accounts: function (){
+      return this.$store.state.accounts;
+    },
+
+    tags: function (){
+      return this.$store.state.tags;
     },
   },
 
@@ -124,17 +168,43 @@ export default {
       this.loadTransactions(this.page);
     },
 
+    applyFilter() {
+      this.loadTransactions(this.page);
+    },
+
     loadTransactions(page){
       const session = this.$cookies.get("auth_session");
 
-      this.$axios.get("/transactions?token=" + session + "&count=25" + "&offset=" + ((page - 1) * 25))
+      const filter = {
+        descriptionContains: this.filterDesc
+      }
+
+      const tagObj = this.tags.find(t => t.name === this.filterTag)
+      const accountObj = this.accounts.find(a => a.name === this.filterAccount)
+      const timeFrom = new Date(this.filterDataFrom).getTime();
+      const timeUpTo = new Date(this.filterDataUpTo).getTime();
+
+      if (tagObj)
+        filter.tag = tagObj.id
+
+      if (accountObj)
+        filter.account = accountObj.id
+
+      if (!isNaN(timeFrom))
+        filter.dateFrom = timeFrom;
+
+      if (!isNaN(timeUpTo))
+        filter.dateUpTo = timeUpTo;
+
+      console.log(filter.dateFrom)
+
+      this.$axios.get("/transactions?token=" + session + "&count=25" + "&offset=" + ((page - 1) * 25) + "&filter=" + encodeURIComponent(JSON.stringify(filter)))
         .then(response => response.data)
         .then(result => {
           this.transactions = result
         })
     }
   },
-
 
   async asyncData({$cookies, $axios, store}) {
     const session = $cookies.get("auth_session");
