@@ -1,4 +1,4 @@
-# MoneySaver Fronted
+# MoneySaver Frontend
 
 This repository has been migrated from a private Gitlab.
 
