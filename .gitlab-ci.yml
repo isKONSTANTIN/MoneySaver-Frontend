@@ -4,6 +4,7 @@ stages:
 
 build:
   stage: build
+  image: node:12.18.1
   script:
     - npm i
     - npm run build
