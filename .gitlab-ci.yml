@@ -1,17 +1,31 @@
+stages:
+  - build
+  - build-docker
+
 build:
   stage: build
   script:
-    - cd building
-    - ./build.sh
+    - npm i
+    - npm run build
+    - echo "#!/bin/bash" >> start.sh
+    - echo "" >> start.sh
+    - echo "npm i" >> start.sh
+    - echo "NUXT_HOST=0.0.0.0 BASE_URL=\$BASE_URL npm start > last.log" >> start.sh
+    - chmod +x start.sh
   artifacts:
     paths:
-      - building/nuxt
-      - building/static
-      - building/package.json
-      - building/nuxt.config.js
-      - building/start.sh
-deploy:
-  stage: deploy
+      - .nuxt
+      - static
+      - package.json
+      - nuxt.config.js
+      - start.sh
+    expire_in: 1 day
+
+build-docker:
+  stage: build-docker
+  image: docker:stable
+
   script:
-    - cd building
-    - sudo BRANCH=master ./push.sh
+    - docker login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASS} https://lab.knrg.su:5000
+    - docker build -t lab.knrg.su:5000/iskonstantin/moneysaver-frontend:${CI_COMMIT_BRANCH} .
+    - docker push lab.knrg.su:5000/iskonstantin/moneysaver-frontend:${CI_COMMIT_BRANCH}
